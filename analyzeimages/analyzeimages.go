@@ -10,25 +10,9 @@ import (
 	"encoding/json"
 	"strings"
 	"bufio"
-	"github.com/coreos/clair/ext/imagefmt"
-	"io"
-	"github.com/coreos/clair/pkg/tarutil"
-	"github.com/coreos/clair/ext/featurefmt"
-	"github.com/coreos/clair/ext/featurens"
+	"github.com/MXi4oyu/DockerXScan/tarutil"
 )
 
-
-//支持docker格式和aci格式
-type format struct{}
-
-func init() {
-	imagefmt.RegisterExtractor("docker", &format{})
-	imagefmt.RegisterExtractor("aci", &format{})
-}
-//提取镜像
-func (f format) ExtractFiles(layerReader io.ReadCloser, toExtract []string) (tarutil.FilesMap, error) {
-	return tarutil.ExtractFiles(layerReader, toExtract)
-}
 
 func AnalyzeLocalImage(imageName,tmpPath string)  {
 
@@ -68,13 +52,11 @@ func AnalyzeLocalImage(imageName,tmpPath string)  {
 
 //检测镜像内容
 func DetectImageContent(imageFormat, name, path string, headers map[string]string,parent string)  {
-	totalRequiredFiles := append(featurefmt.RequiredFilenames(), featurens.RequiredFilenames()...)
-	files, err := imagefmt.Extract(imageFormat, path, headers, totalRequiredFiles)
-	if err!=nil{
-		log.Println("imagefmt.Extract Error",err.Error())
-	}
-	log.Println(files)
 
+	f,_:=os.Open(path)
+	files,_:=tarutil.ExtractFiles(f,[]string{"dome"})
+
+	fmt.Println(files)
 }
 
 //分析每一层镜像

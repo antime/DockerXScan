@@ -15,7 +15,6 @@ import (
 	"github.com/coreos/clair/pkg/tarutil"
 	"github.com/coreos/clair/ext/featurefmt"
 	"github.com/coreos/clair/ext/featurens"
-	"github.com/go-sql-driver/mysql"
 )
 
 
@@ -75,9 +74,7 @@ func DetectImageContent(imageFormat, name, path string, headers map[string]strin
 		fmt.Println("imagefmt.Extract Error::",err.Error())
 	}
 
-	features, err := featurefmt.ListFeatures(files)
-
-	fmt.Println(features)
+	fmt.Println(files)
 
 }
 

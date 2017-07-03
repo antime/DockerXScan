@@ -11,6 +11,8 @@ import (
 	"strings"
 	"bufio"
 	"github.com/MXi4oyu/DockerXScan/tarutil"
+	"github.com/coreos/clair/ext/featurefmt"
+	"github.com/coreos/clair/ext/featurens"
 )
 
 
@@ -53,10 +55,17 @@ func AnalyzeLocalImage(imageName,tmpPath string)  {
 //检测镜像内容
 func DetectImageContent(imageFormat, name, path string, headers map[string]string,parent string)  {
 
-	f,_:=os.Open(path)
-	files,_:=tarutil.ExtractFiles(f,[]string{"dome"})
-
+	f,err:=os.Open(path)
+	if err!=nil{
+		fmt.Println("open file error::",err.Error())
+	}
+	totalRequiredFiles := append(featurefmt.RequiredFilenames(), featurens.RequiredFilenames()...)
+	files,err:=tarutil.ExtractFiles(f,totalRequiredFiles)
+	if err!=nil{
+		fmt.Println("tar file error::",err.Error())
+	}
 	fmt.Println(files)
+
 }
 
 //分析每一层镜像

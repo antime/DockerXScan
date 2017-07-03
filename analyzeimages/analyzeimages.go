@@ -71,18 +71,18 @@ func DetectImageContent(imageFormat, name, path string, headers map[string]strin
 	totalRequiredFiles := append(featurefmt.RequiredFilenames(), featurens.RequiredFilenames()...)
 	files, err := imagefmt.Extract(imageFormat, path, headers, totalRequiredFiles)
 	if err!=nil{
-		fmt.Println("imagefmt.Extract Error::",err.Error())
+		log.Println("imagefmt.Extract Error",err.Error())
 	}
-
-	fmt.Println(files)
+	log.Println(files)
 
 }
 
 //分析每一层镜像
 func analyzeLayer(path, layerName, parentLayerName string) error {
 
+	lheaders:=make(map[string]string)
 	//对layer进行分析
-
+	DetectImageContent("docker",layerName,path,lheaders,parentLayerName)
 	return nil
 }
 

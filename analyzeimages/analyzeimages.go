@@ -11,8 +11,7 @@ import (
 	"strings"
 	"bufio"
 	"github.com/MXi4oyu/DockerXScan/tarutil"
-	"github.com/coreos/clair/ext/featurefmt"
-	"github.com/coreos/clair/ext/featurens"
+	"github.com/MXi4oyu/DockerXScan/feature"
 )
 
 
@@ -53,28 +52,41 @@ func AnalyzeLocalImage(imageName,tmpPath string)  {
 }
 
 //检测镜像内容
-func DetectImageContent(imageFormat, name, path string, headers map[string]string,parent string)  {
+func DetectImageContent(imageFormat, name, path string,parent string) (tarutil.FilesMap, error)  {
 
 	f,err:=os.Open(path)
+	defer f.Close()
 	if err!=nil{
 		fmt.Println("open file error::",err.Error())
 	}
-	totalRequiredFiles := append(featurefmt.RequiredFilenames(), featurens.RequiredFilenames()...)
-	files,err:=tarutil.ExtractFiles(f,totalRequiredFiles)
+
+	//特征文件
+	var filelists [] string =[]string{"var/lib/dpkg/status","lib/apk/db/installed","var/lib/rpm/Packages"}
+
+	files,err:=tarutil.ExtractFiles(f,filelists)
 	if err!=nil{
 		fmt.Println("tar file error::",err.Error())
 	}
-	fmt.Println(files)
+	/*
+	for k,v:=range files{
+
+		fmt.Println(k)
+		fmt.Println(string(v))
+	}
+	*/
+
+	return files,err
 
 }
 
 //分析每一层镜像
 func analyzeLayer(path, layerName, parentLayerName string) error {
 
-	lheaders:=make(map[string]string)
 	//对layer进行分析
-	DetectImageContent("docker",layerName,path,lheaders,parentLayerName)
-	return nil
+	files,err:=DetectImageContent("docker",layerName,path,parentLayerName)
+	//列出特征版本
+	feature.ListFeatures(files)
+	return err
 }
 
 func historyFromCommand(imageName string) ([]string, error) {

@@ -5,7 +5,6 @@ import(
 	"log"
 	"flag"
 	"github.com/MXi4oyu/DockerXScan/analyzeimages"
-	"github.com/MXi4oyu/DockerXScan/feature/dpkg"
 )
 
 func main()  {
@@ -16,8 +15,6 @@ func main()  {
 		log.Fatalf("Could not create temporary folder: %s", err)
 	}
 	//defer os.RemoveAll(tmpPath)
-
-	dpkg.TestLister()
 
 	// 解析命令行参数
 	imageName:=flag.String("imageName","wordpress","wordpress")

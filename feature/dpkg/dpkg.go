@@ -15,8 +15,13 @@ var (
 	dpkgSrcCaptureRegexp      = regexp.MustCompile(`Source: (?P<name>[^\s]*)( \((?P<version>.*)\))?`)
 	dpkgSrcCaptureRegexpNames = dpkgSrcCaptureRegexp.SubexpNames()
 )
+type lister struct{}
 
-func ListFeatures(files tarutil.FilesMap) (features []feature.FeatureVersion,errs error) {
+func init()  {
+	feature.RegisterLister("dpkg",&lister{})
+}
+
+func (l lister) ListFeatures(files tarutil.FilesMap) (features []feature.FeatureVersion,errs error) {
 	f, hasFile := files["var/lib/dpkg/status"]
 
 	if !hasFile{

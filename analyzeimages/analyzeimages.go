@@ -85,7 +85,10 @@ func analyzeLayer(path, layerName, parentLayerName string) error {
 	//对layer进行分析
 	files,err:=DetectImageContent("docker",layerName,path,parentLayerName)
 	//列出特征版本
-	feature.ListFeatures(files)
+	featureversions,err:=feature.ListFeatures(files)
+	for i,v :=range featureversions{
+		fmt.Println(i,v)
+	}
 	return err
 }
 

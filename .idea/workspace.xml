@@ -2,11 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e0cc8cda-7c4f-44d2-a6f7-e022f62dd404" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/feature/dpkg/dpkg.go" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/feature/driver.go" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/feature/models.go" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/versionfmt/dpkg/parser.go" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/versionfmt/driver.go" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/versionfmt/rpm/parser.go" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/feature/driver.go" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/analyzeimages/analyzeimages.go" afterPath="$PROJECT_DIR$/analyzeimages/analyzeimages.go" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main.go" afterPath="$PROJECT_DIR$/main.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/feature/dpkg/dpkg.go" afterPath="$PROJECT_DIR$/feature/dpkg/dpkg.go" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -22,7 +24,7 @@
         <entry file="file://$PROJECT_DIR$/main.go">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="297">
-              <caret line="11" column="0" lean-forward="true" selection-start-line="11" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
+              <caret line="11" column="0" lean-forward="false" selection-start-line="11" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
               <folding>
                 <element signature="e#14#146#0" expanded="true" />
               </folding>
@@ -33,22 +35,10 @@
       <file leaf-file-name="analyzeimages.go" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/analyzeimages/analyzeimages.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="83">
-              <caret line="54" column="5" lean-forward="false" selection-start-line="54" selection-start-column="5" selection-end-line="54" selection-end-column="5" />
+            <state relative-caret-position="488">
+              <caret line="75" column="6" lean-forward="true" selection-start-line="75" selection-start-column="6" selection-end-line="75" selection-end-column="6" />
               <folding>
                 <element signature="e#23#204#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="driver.go" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/feature/driver.go">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="845">
-              <caret line="53" column="17" lean-forward="false" selection-start-line="53" selection-start-column="5" selection-end-line="53" selection-end-column="17" />
-              <folding>
-                <element signature="e#17#77#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -57,12 +47,57 @@
       <file leaf-file-name="dpkg.go" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/feature/dpkg/dpkg.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="297">
-              <caret line="36" column="45" lean-forward="true" selection-start-line="36" selection-start-column="45" selection-end-line="36" selection-end-column="45" />
+            <state relative-caret-position="521">
+              <caret line="81" column="5" lean-forward="false" selection-start-line="81" selection-start-column="5" selection-end-line="81" selection-end-column="5" />
               <folding>
-                <element signature="e#14#217#0" expanded="true" />
-                <element signature="e#1193#2936#0" expanded="false" />
+                <element signature="e#14#240#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="driver.go" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/versionfmt/driver.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="2565">
+              <caret line="95" column="1" lean-forward="false" selection-start-line="95" selection-start-column="1" selection-end-line="95" selection-end-column="1" />
+              <folding>
+                <element signature="e#20#48#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="parser.go" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/versionfmt/dpkg/parser.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="7155">
+              <caret line="265" column="1" lean-forward="false" selection-start-line="265" selection-start-column="1" selection-end-line="265" selection-end-column="1" />
+              <folding>
+                <element signature="e#14#112#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="parser.go" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/versionfmt/rpm/parser.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="656">
+              <caret line="256" column="1" lean-forward="false" selection-start-line="256" selection-start-column="1" selection-end-line="256" selection-end-column="1" />
+              <folding>
+                <element signature="e#13#129#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="models.go" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/feature/models.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="837">
+              <caret line="31" column="19" lean-forward="false" selection-start-line="31" selection-start-column="5" selection-end-line="31" selection-end-column="19" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -90,8 +125,13 @@
         <option value="$PROJECT_DIR$/analyzeimages.go" />
         <option value="$PROJECT_DIR$/tarutil/tarutil.go" />
         <option value="$PROJECT_DIR$/analyzeimages/analyzeimages.go" />
-        <option value="$PROJECT_DIR$/feature/driver.go" />
         <option value="$PROJECT_DIR$/main.go" />
+        <option value="$PROJECT_DIR$/feature/driver.go" />
+        <option value="$PROJECT_DIR$/feature/dpkg.go" />
+        <option value="$PROJECT_DIR$/feature/models.go" />
+        <option value="$PROJECT_DIR$/versionfmt/driver.go" />
+        <option value="$PROJECT_DIR$/versionfmt/dpkg/parser.go" />
+        <option value="$PROJECT_DIR$/versionfmt/rpm/parser.go" />
         <option value="$PROJECT_DIR$/feature/dpkg/dpkg.go" />
       </list>
     </option>
@@ -136,6 +176,20 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="DockerXScan" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="DockerXScan" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="feature" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
         </subPane>
       </pane>
       <pane id="Scope" />
@@ -149,6 +203,7 @@
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\code\go\gopath\src\github.com\MXi4oyu\DockerXScan\feature\dpkg" />
       <recent name="D:\code\go\gopath\src\github.com\MXi4oyu\DockerXScan" />
       <recent name="D:\code\go\gopath\src\github.com\MXi4oyu\DockerXScan\analyzeimages" />
     </key>
@@ -280,6 +335,42 @@
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/main.go">
       <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="135">
+          <caret line="11" column="0" lean-forward="false" selection-start-line="11" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
+          <folding>
+            <element signature="e#14#146#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/analyzeimages/analyzeimages.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1134">
+          <caret line="54" column="5" lean-forward="false" selection-start-line="54" selection-start-column="5" selection-end-line="54" selection-end-column="5" />
+          <folding>
+            <element signature="e#23#204#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/feature/driver.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1350">
+          <caret line="53" column="17" lean-forward="false" selection-start-line="53" selection-start-column="5" selection-end-line="53" selection-end-column="17" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/feature/dpkg/dpkg.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="594">
+          <caret line="33" column="5" lean-forward="false" selection-start-line="33" selection-start-column="5" selection-end-line="33" selection-end-column="5" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main.go">
+      <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="162">
           <caret line="6" column="50" lean-forward="true" selection-start-line="6" selection-start-column="50" selection-end-line="6" selection-end-column="50" />
           <folding>
@@ -302,9 +393,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2457">
           <caret line="105" column="82" lean-forward="true" selection-start-line="105" selection-start-column="82" selection-end-line="105" selection-end-column="82" />
-          <folding>
-            <element signature="e#933#1131#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -322,9 +410,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="483">
           <caret line="94" column="1" lean-forward="true" selection-start-line="94" selection-start-column="1" selection-end-line="94" selection-end-column="1" />
-          <folding>
-            <element signature="e#933#1131#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -350,7 +435,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="245">
           <caret line="369" column="5" lean-forward="false" selection-start-line="369" selection-start-column="5" selection-end-line="369" selection-end-column="5" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -364,43 +448,86 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/analyzeimages/analyzeimages.go">
+    <entry file="file://$PROJECT_DIR$/feature/driver.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="83">
-          <caret line="54" column="5" lean-forward="false" selection-start-line="54" selection-start-column="5" selection-end-line="54" selection-end-column="5" />
-          <folding>
-            <element signature="e#23#204#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="953">
+          <caret line="53" column="34" lean-forward="false" selection-start-line="53" selection-start-column="34" selection-end-line="53" selection-end-column="34" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/main.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="297">
-          <caret line="11" column="0" lean-forward="true" selection-start-line="11" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
+          <caret line="11" column="0" lean-forward="false" selection-start-line="11" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
           <folding>
             <element signature="e#14#146#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/feature/driver.go">
+    <entry file="file://$PROJECT_DIR$/feature/dpkg/dpkg.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="845">
-          <caret line="53" column="17" lean-forward="false" selection-start-line="53" selection-start-column="5" selection-end-line="53" selection-end-column="17" />
+        <state relative-caret-position="494">
+          <caret line="112" column="45" lean-forward="true" selection-start-line="112" selection-start-column="45" selection-end-line="112" selection-end-column="45" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/analyzeimages/analyzeimages.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="488">
+          <caret line="75" column="6" lean-forward="true" selection-start-line="75" selection-start-column="6" selection-end-line="75" selection-end-column="6" />
           <folding>
-            <element signature="e#17#77#0" expanded="true" />
+            <element signature="e#23#204#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/feature/models.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="837">
+          <caret line="31" column="19" lean-forward="false" selection-start-line="31" selection-start-column="5" selection-end-line="31" selection-end-column="19" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/versionfmt/driver.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2565">
+          <caret line="95" column="1" lean-forward="false" selection-start-line="95" selection-start-column="1" selection-end-line="95" selection-end-column="1" />
+          <folding>
+            <element signature="e#20#48#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/versionfmt/dpkg/parser.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="7155">
+          <caret line="265" column="1" lean-forward="false" selection-start-line="265" selection-start-column="1" selection-end-line="265" selection-end-column="1" />
+          <folding>
+            <element signature="e#14#112#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/versionfmt/rpm/parser.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="656">
+          <caret line="256" column="1" lean-forward="false" selection-start-line="256" selection-start-column="1" selection-end-line="256" selection-end-column="1" />
+          <folding>
+            <element signature="e#13#129#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/feature/dpkg/dpkg.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="297">
-          <caret line="36" column="45" lean-forward="true" selection-start-line="36" selection-start-column="45" selection-end-line="36" selection-end-column="45" />
+        <state relative-caret-position="521">
+          <caret line="81" column="5" lean-forward="false" selection-start-line="81" selection-start-column="5" selection-end-line="81" selection-end-column="5" />
           <folding>
-            <element signature="e#14#217#0" expanded="true" />
-            <element signature="e#1193#2936#0" expanded="false" />
+            <element signature="e#14#240#0" expanded="true" />
           </folding>
         </state>
       </provider>

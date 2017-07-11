@@ -1,4 +1,4 @@
-package feature
+package featurefmt
 
 // ID is only meant to be used by database implementations and should never be used for anything else.
 type Model struct {
@@ -34,7 +34,7 @@ type FeatureVersion struct {
 
 	Feature    Feature
 	Version    string
-	// For output purposes. Only make sense when the feature version is in the context of an image.
+	// For output purposes. Only make sense when the featurefmt version is in the context of an image.
 	AddedBy Layer
 }
 

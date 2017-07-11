@@ -6,7 +6,7 @@ import (
 	"regexp"
 	"log"
 	"github.com/MXi4oyu/DockerXScan/tarutil"
-	"github.com/MXi4oyu/DockerXScan/feature"
+	"github.com/MXi4oyu/DockerXScan/featurefmt"
 	"github.com/MXi4oyu/DockerXScan/versionfmt"
 	"github.com/MXi4oyu/DockerXScan/versionfmt/dpkg"
 )
@@ -18,19 +18,19 @@ var (
 type lister struct{}
 
 func init()  {
-	feature.RegisterLister("dpkg",&lister{})
+	featurefmt.RegisterLister("dpkg",&lister{})
 }
 
-func (l lister) ListFeatures(files tarutil.FilesMap) (features []feature.FeatureVersion,errs error) {
+func (l lister) ListFeatures(files tarutil.FilesMap) (features []featurefmt.FeatureVersion,errs error) {
 	f, hasFile := files["var/lib/dpkg/status"]
 
 	if !hasFile{
-		return []feature.FeatureVersion{},nil
+		return []featurefmt.FeatureVersion{},nil
 	}
 	// Create a map to store packages and ensure their uniqueness
-	packagesMap:=make(map[string]feature.FeatureVersion)
+	packagesMap:=make(map[string]featurefmt.FeatureVersion)
 
-	var pkg feature.FeatureVersion
+	var pkg featurefmt.FeatureVersion
 	var err error
 
 	scanner := bufio.NewScanner(strings.NewReader(string(f)))
@@ -81,7 +81,7 @@ func (l lister) ListFeatures(files tarutil.FilesMap) (features []feature.Feature
 	}
 
 	// Convert the map to a slice
-	packages := make([]feature.FeatureVersion, 0, len(packagesMap))
+	packages := make([]featurefmt.FeatureVersion, 0, len(packagesMap))
 	for _, pkg := range packagesMap {
 		packages = append(packages, pkg)
 	}

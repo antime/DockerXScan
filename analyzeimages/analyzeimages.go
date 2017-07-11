@@ -11,7 +11,7 @@ import (
 	"strings"
 	"bufio"
 	"github.com/MXi4oyu/DockerXScan/tarutil"
-	"github.com/MXi4oyu/DockerXScan/feature"
+	"github.com/MXi4oyu/DockerXScan/featurefmt"
 )
 
 
@@ -85,7 +85,7 @@ func analyzeLayer(path, layerName, parentLayerName string) error {
 	//对layer进行分析
 	files,err:=DetectImageContent("docker",layerName,path,parentLayerName)
 	//列出特征版本
-	featureversions,err:=feature.ListFeatures(files)
+	featureversions,err:= featurefmt.ListFeatures(files)
 	for i,v :=range featureversions{
 		fmt.Println(i,v)
 	}

@@ -5,9 +5,9 @@ import(
 	"log"
 	"flag"
 	"github.com/MXi4oyu/DockerXScan/analyzeimages"
-	_ "github.com/MXi4oyu/DockerXScan/feature/apk"
-	_ "github.com/MXi4oyu/DockerXScan/feature/rpm"
-	_ "github.com/MXi4oyu/DockerXScan/feature/dpkg"
+	_ "github.com/MXi4oyu/DockerXScan/featurefmt/apk"
+	_ "github.com/MXi4oyu/DockerXScan/featurefmt/rpm"
+	_ "github.com/MXi4oyu/DockerXScan/featurefmt/dpkg"
 )
 
 func main()  {

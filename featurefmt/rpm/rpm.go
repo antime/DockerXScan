@@ -10,25 +10,25 @@ import (
 	"github.com/MXi4oyu/DockerXScan/versionfmt"
 	"github.com/MXi4oyu/DockerXScan/versionfmt/rpm"
 	"github.com/MXi4oyu/DockerXScan/tarutil"
-	"github.com/MXi4oyu/DockerXScan/feature"
+	"github.com/MXi4oyu/DockerXScan/featurefmt"
 )
 
 type lister struct{}
 
 func init()  {
-	feature.RegisterLister("rpm",&lister{})
+	featurefmt.RegisterLister("rpm",&lister{})
 }
 
-func (l lister) ListFeatures(files tarutil.FilesMap) (features []feature.FeatureVersion,errs error) {
+func (l lister) ListFeatures(files tarutil.FilesMap) (features []featurefmt.FeatureVersion,errs error) {
 	f, hasFile := files["var/lib/rpm/Packages"]
 
 	if !hasFile{
-		return []feature.FeatureVersion{},nil
+		return []featurefmt.FeatureVersion{},nil
 	}
 	// Create a map to store packages and ensure their uniqueness
-	packagesMap:=make(map[string]feature.FeatureVersion)
+	packagesMap:=make(map[string]featurefmt.FeatureVersion)
 
-	var pkg feature.FeatureVersion
+	var pkg featurefmt.FeatureVersion
 	var err error
 
 	// Write the required "Packages" file to disk
@@ -36,13 +36,13 @@ func (l lister) ListFeatures(files tarutil.FilesMap) (features []feature.Feature
 	defer os.RemoveAll(tmpDir)
 	if ioerr!=nil{
 		log.Println("could not create temporary folder for RPM detection")
-		return []feature.FeatureVersion{},ioerr
+		return []featurefmt.FeatureVersion{},ioerr
 	}
 
 	ioerr=ioutil.WriteFile(tmpDir+"/Packages", f, 0700)
 	if ioerr!=nil{
 		log.Println("could not create temporary file for RPM detection")
-		return []feature.FeatureVersion{},ioerr
+		return []featurefmt.FeatureVersion{},ioerr
 	}
 
 	// Extract binary package names because RHSA refers to binary package names.
@@ -51,7 +51,7 @@ func (l lister) ListFeatures(files tarutil.FilesMap) (features []feature.Feature
 
 	if err!=nil{
 		log.Println("could not query RPM")
-		return []feature.FeatureVersion{},err
+		return []featurefmt.FeatureVersion{},err
 	}
 
 	scanner := bufio.NewScanner(strings.NewReader(string(out)))
@@ -77,8 +77,8 @@ func (l lister) ListFeatures(files tarutil.FilesMap) (features []feature.Feature
 			continue
 		}
 
-		pkg=feature.FeatureVersion{
-			Feature:feature.Feature{
+		pkg= featurefmt.FeatureVersion{
+			Feature: featurefmt.Feature{
 				Name:line[0],
 			},
 			Version:version,
@@ -88,7 +88,7 @@ func (l lister) ListFeatures(files tarutil.FilesMap) (features []feature.Feature
 
 	}
 
-	packages :=make([]feature.FeatureVersion,0,len(packagesMap))
+	packages :=make([]featurefmt.FeatureVersion,0,len(packagesMap))
 	for _,pkg:=range packagesMap{
 		packages=append(packages,pkg)
 	}

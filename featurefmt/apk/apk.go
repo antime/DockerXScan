@@ -7,25 +7,25 @@ import (
 	"github.com/MXi4oyu/DockerXScan/tarutil"
 	"github.com/MXi4oyu/DockerXScan/versionfmt"
 	"github.com/MXi4oyu/DockerXScan/versionfmt/dpkg"
-	"github.com/MXi4oyu/DockerXScan/feature"
+	"github.com/MXi4oyu/DockerXScan/featurefmt"
 )
 
 func init()  {
 
-	feature.RegisterLister("apk",&lister{})
+	featurefmt.RegisterLister("apk",&lister{})
 }
 
 type lister struct{}
 
-func (l lister) ListFeatures(files tarutil.FilesMap) (features []feature.FeatureVersion,errs error)  {
+func (l lister) ListFeatures(files tarutil.FilesMap) (features []featurefmt.FeatureVersion,errs error)  {
 
 	file, exists := files["lib/apk/db/installed"]
 	if !exists {
-		return []feature.FeatureVersion{},nil
+		return []featurefmt.FeatureVersion{},nil
 	}
 
-	pkgSet:=make(map[string]feature.FeatureVersion)
-	ipkg:=feature.FeatureVersion{}
+	pkgSet:=make(map[string]featurefmt.FeatureVersion)
+	ipkg:= featurefmt.FeatureVersion{}
 
 	scanner:=bufio.NewScanner(bytes.NewBuffer(file))
 
@@ -50,19 +50,19 @@ func (l lister) ListFeatures(files tarutil.FilesMap) (features []feature.Feature
 		case line == "":
 			// Restart if the parser reaches another package definition before
 			// creating a valid package.
-			ipkg = feature.FeatureVersion{}
+			ipkg = featurefmt.FeatureVersion{}
 		}
 
-		// If we have a whole feature, store it in the set and try to parse a new
+		// If we have a whole featurefmt, store it in the set and try to parse a new
 		// one.
 		if ipkg.Feature.Name != "" && ipkg.Version != "" {
 			pkgSet[ipkg.Feature.Name+"#"+ipkg.Version] = ipkg
-			ipkg = feature.FeatureVersion{}
+			ipkg = featurefmt.FeatureVersion{}
 		}
 	}
 
 	// Convert the map into a slice.
-	pkgs := make([]feature.FeatureVersion, 0, len(pkgSet))
+	pkgs := make([]featurefmt.FeatureVersion, 0, len(pkgSet))
 	for _, pkg := range pkgSet {
 		pkgs = append(pkgs, pkg)
 	}

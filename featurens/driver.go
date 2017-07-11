@@ -4,7 +4,7 @@ import (
 	"sync"
 	"github.com/MXi4oyu/DockerXScan/database"
 	"github.com/MXi4oyu/DockerXScan/tarutil"
-	"github.com/gogather/com/log"
+	"log"
 )
 
 var (

@@ -117,7 +117,7 @@ func analyzeLayer(path, layerName, parentLayerName string) error {
 		log.Println("namespace Detect error::")
 	}
 
-	fmt.Println(namespace)
+	fmt.Println(namespace.Name)
 
 	//列出特征版本
 	featureversions,err:= featurefmt.ListFeatures(files)

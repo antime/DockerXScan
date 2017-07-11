@@ -10,7 +10,7 @@ import (
 	"github.com/MXi4oyu/DockerXScan/versionfmt"
 	"github.com/MXi4oyu/DockerXScan/versionfmt/rpm"
 	"github.com/MXi4oyu/DockerXScan/tarutil"
-	"../../feature"
+	"github.com/MXi4oyu/DockerXScan/feature"
 )
 
 type lister struct{}

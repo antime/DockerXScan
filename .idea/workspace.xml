@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e0cc8cda-7c4f-44d2-a6f7-e022f62dd404" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/featurens/driver.go" afterPath="$PROJECT_DIR$/featurens/driver.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main.go" afterPath="$PROJECT_DIR$/main.go" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -14,11 +14,21 @@
   <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file leaf-file-name="main.go" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/main.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="405">
+              <caret line="15" column="62" lean-forward="true" selection-start-line="15" selection-start-column="62" selection-end-line="15" selection-end-column="62" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file leaf-file-name="analyzeimages.go" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/analyzeimages/analyzeimages.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="359">
-              <caret line="65" column="6" lean-forward="false" selection-start-line="65" selection-start-column="6" selection-end-line="65" selection-end-column="6" />
+            <state relative-caret-position="494">
+              <caret line="64" column="83" lean-forward="false" selection-start-line="64" selection-start-column="83" selection-end-line="64" selection-end-column="83" />
               <folding>
                 <element signature="e#23#251#0" expanded="true" />
               </folding>
@@ -26,12 +36,14 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="driver.go" pinned="false" current-in-tab="true">
+      <file leaf-file-name="driver.go" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/featurens/driver.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1315">
-              <caret line="6" column="5" lean-forward="false" selection-start-line="6" selection-start-column="5" selection-end-line="6" selection-end-column="5" />
-              <folding />
+            <state relative-caret-position="1809">
+              <caret line="67" column="16" lean-forward="false" selection-start-line="67" selection-start-column="16" selection-end-line="67" selection-end-column="16" />
+              <folding>
+                <element signature="e#19#129#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -67,7 +79,6 @@
         <option value="$PROJECT_DIR$/versionfmt/dpkg/parser.go" />
         <option value="$PROJECT_DIR$/feature/apk/apk.go" />
         <option value="$PROJECT_DIR$/feature/driver.go" />
-        <option value="$PROJECT_DIR$/main.go" />
         <option value="$PROJECT_DIR$/feature/rpm/rpm.go" />
         <option value="$PROJECT_DIR$/featurens/alpinerelease/alpinerelease.go" />
         <option value="$PROJECT_DIR$/featurens/aptsources/aptsources.go" />
@@ -80,6 +91,7 @@
         <option value="$PROJECT_DIR$/featurefmt/rpm/rpm.go" />
         <option value="$PROJECT_DIR$/analyzeimages/analyzeimages.go" />
         <option value="$PROJECT_DIR$/featurens/driver.go" />
+        <option value="$PROJECT_DIR$/main.go" />
       </list>
     </option>
   </component>
@@ -445,14 +457,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/main.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="243">
-          <caret line="9" column="54" lean-forward="true" selection-start-line="9" selection-start-column="54" selection-end-line="9" selection-end-column="54" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/tarutil/tarutil.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="245">
@@ -565,20 +569,30 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/featurens/driver.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1809">
+          <caret line="67" column="16" lean-forward="false" selection-start-line="67" selection-start-column="16" selection-end-line="67" selection-end-column="16" />
+          <folding>
+            <element signature="e#19#129#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/analyzeimages/analyzeimages.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="359">
-          <caret line="65" column="6" lean-forward="false" selection-start-line="65" selection-start-column="6" selection-end-line="65" selection-end-column="6" />
+        <state relative-caret-position="494">
+          <caret line="64" column="83" lean-forward="false" selection-start-line="64" selection-start-column="83" selection-end-line="64" selection-end-column="83" />
           <folding>
             <element signature="e#23#251#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/featurens/driver.go">
+    <entry file="file://$PROJECT_DIR$/main.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1315">
-          <caret line="6" column="5" lean-forward="false" selection-start-line="6" selection-start-column="5" selection-end-line="6" selection-end-column="5" />
+        <state relative-caret-position="405">
+          <caret line="15" column="62" lean-forward="true" selection-start-line="15" selection-start-column="62" selection-end-line="15" selection-end-column="62" />
           <folding />
         </state>
       </provider>

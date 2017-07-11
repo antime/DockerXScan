@@ -5,9 +5,15 @@ import(
 	"log"
 	"flag"
 	"github.com/MXi4oyu/DockerXScan/analyzeimages"
+	// Register extensions.
 	_ "github.com/MXi4oyu/DockerXScan/featurefmt/apk"
 	_ "github.com/MXi4oyu/DockerXScan/featurefmt/rpm"
 	_ "github.com/MXi4oyu/DockerXScan/featurefmt/dpkg"
+	_ "github.com/MXi4oyu/DockerXScan/featurens/alpinerelease"
+	_ "github.com/MXi4oyu/DockerXScan/featurens/aptsources"
+	_ "github.com/MXi4oyu/DockerXScan/featurens/lsbrelease"
+	_ "github.com/MXi4oyu/DockerXScan/featurens/osrelease"
+	_ "github.com/MXi4oyu/DockerXScan/featurens/redhatrelease"
 )
 
 func main()  {

@@ -13,6 +13,7 @@ import (
 	"github.com/MXi4oyu/DockerXScan/tarutil"
 	"github.com/MXi4oyu/DockerXScan/featurefmt"
 	"github.com/MXi4oyu/DockerXScan/featurens"
+	"github.com/MXi4oyu/DockerXScan/database"
 )
 
 
@@ -81,16 +82,49 @@ func DetectImageContent(imageFormat, name, path string,parent string) (tarutil.F
 
 }
 
+func DetectNamespace(files tarutil.FilesMap, parent *database.Layer)  (namespace *database.Namespace, err error){
+
+	namespace, err = featurens.Detect(files)
+	if err != nil {
+		return
+	}
+	if namespace != nil {
+		log.Println(namespace.Name)
+		return
+	}
+	if parent != nil {
+		namespace = parent.Namespace
+		if namespace != nil {
+			log.Println(namespace.Name)
+			return
+		}
+		return
+	}
+
+	return
+}
+
 //分析每一层镜像
 func analyzeLayer(path, layerName, parentLayerName string) error {
 
 	//对layer进行分析
 	files,err:=DetectImageContent("docker",layerName,path,parentLayerName)
+
+	//列出namespace
+
+	namespace,err:=featurens.Detect(files)
+	if err!=nil{
+		log.Println("namespace Detect error::")
+	}
+
+	fmt.Println(namespace)
+
 	//列出特征版本
 	featureversions,err:= featurefmt.ListFeatures(files)
 	for i,v :=range featureversions{
 		fmt.Println(i,v)
 	}
+
 	return err
 }
 

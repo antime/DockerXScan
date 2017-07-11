@@ -4,10 +4,10 @@ import (
 	"bufio"
 	"bytes"
 	"log"
-	"github.com/MXi4oyu/DockerXScan/feature"
 	"github.com/MXi4oyu/DockerXScan/tarutil"
 	"github.com/MXi4oyu/DockerXScan/versionfmt"
 	"github.com/MXi4oyu/DockerXScan/versionfmt/dpkg"
+	"github.com/MXi4oyu/DockerXScan/feature"
 )
 
 func init()  {

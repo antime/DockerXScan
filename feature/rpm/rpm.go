@@ -1,7 +1,6 @@
 package rpm
 
 import (
-
 	"bufio"
 	"strings"
 	"log"
@@ -11,8 +10,7 @@ import (
 	"github.com/MXi4oyu/DockerXScan/versionfmt"
 	"github.com/MXi4oyu/DockerXScan/versionfmt/rpm"
 	"github.com/MXi4oyu/DockerXScan/tarutil"
-	"github.com/MXi4oyu/DockerXScan/feature"
-
+	"../../feature"
 )
 
 type lister struct{}

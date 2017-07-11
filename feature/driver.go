@@ -3,7 +3,6 @@ package feature
 import (
 	"sync"
 	"github.com/MXi4oyu/DockerXScan/tarutil"
-	_ "github.com/MXi4oyu/DockerXScan/feature/dpkg"
 )
 
 var (

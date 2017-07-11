@@ -1,14 +1,14 @@
 package dpkg
 
 import (
-	"github.com/MXi4oyu/DockerXScan/tarutil"
-	"github.com/MXi4oyu/DockerXScan/feature"
 	"bufio"
 	"strings"
 	"regexp"
+	"log"
+	"github.com/MXi4oyu/DockerXScan/tarutil"
+	"github.com/MXi4oyu/DockerXScan/feature"
 	"github.com/MXi4oyu/DockerXScan/versionfmt"
 	"github.com/MXi4oyu/DockerXScan/versionfmt/dpkg"
-	"log"
 )
 
 var (

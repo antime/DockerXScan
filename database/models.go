@@ -1,4 +1,4 @@
-package featurefmt
+package database
 
 // ID is only meant to be used by database implementations and should never be used for anything else.
 type Model struct {

@@ -12,6 +12,7 @@ import (
 	"bufio"
 	"github.com/MXi4oyu/DockerXScan/tarutil"
 	"github.com/MXi4oyu/DockerXScan/featurefmt"
+	"github.com/MXi4oyu/DockerXScan/featurens"
 )
 
 
@@ -61,9 +62,10 @@ func DetectImageContent(imageFormat, name, path string,parent string) (tarutil.F
 	}
 
 	//特征文件
-	var filelists [] string =[]string{"var/lib/dpkg/status","lib/apk/db/installed","var/lib/rpm/Packages"}
+	totalRequiredFiles := append(featurefmt.RequiredFilenames(), featurens.RequiredFilenames()...)
+	//var filelists [] string =[]string{"var/lib/dpkg/status","lib/apk/db/installed","var/lib/rpm/Packages"}
 
-	files,err:=tarutil.ExtractFiles(f,filelists)
+	files,err:=tarutil.ExtractFiles(f,totalRequiredFiles)
 	if err!=nil{
 		fmt.Println("tar file error::",err.Error())
 	}

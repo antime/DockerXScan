@@ -3,6 +3,7 @@ package featurefmt
 import (
 	"sync"
 	"github.com/MXi4oyu/DockerXScan/tarutil"
+	"github.com/MXi4oyu/DockerXScan/database"
 )
 
 var (
@@ -11,22 +12,34 @@ var (
 )
 
 type Lister interface{
-	ListFeatures(files tarutil.FilesMap) (features []FeatureVersion,errs error)
+	ListFeatures(files tarutil.FilesMap) (features []database.FeatureVersion,errs error)
+	RequiredFilenames() []string
 }
 
-func ListFeatures(files tarutil.FilesMap)(features []FeatureVersion,errs error){
+func ListFeatures(files tarutil.FilesMap)(features []database.FeatureVersion,errs error){
 	listersM.RLock()
 	defer listersM.RUnlock()
-	var totalFeatures []FeatureVersion
+	var totalFeatures []database.FeatureVersion
 	for _, lister := range listers {
 		features, err := lister.ListFeatures(files)
 		if err != nil {
-			return []FeatureVersion{}, err
+			return []database.FeatureVersion{}, err
 		}
 		totalFeatures = append(totalFeatures, features...)
 	}
 
 	return totalFeatures, nil
+}
+
+func RequiredFilenames() (files []string) {
+	listersM.RLock()
+	defer listersM.RUnlock()
+
+	for _, lister := range listers {
+		files = append(files, lister.RequiredFilenames()...)
+	}
+
+	return
 }
 
 func RegisterLister(name string, l Lister) {

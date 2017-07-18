@@ -14,10 +14,9 @@ import (
 	"github.com/hashicorp/golang-lru"
 )
 
-func init()  {
-	//注册数据库驱动
+func init() {
+
 	database.Register("pgsql", openDatabase)
-	fmt.Println("init pgsql")
 }
 
 type Queryer interface {
@@ -58,7 +57,12 @@ type Config struct {
 	FixturePath             string
 }
 
-
+// openDatabase opens a PostgresSQL-backed Datastore using the given
+// configuration.
+//
+// It immediately runs all necessary migrations. If ManageDatabaseLifecycle is
+// specified, the database will be created first. If FixturePath is specified,
+// every SQL queries that are present insides will be executed.
 func openDatabase(registrableComponentConfig database.RegistrableComponentConfig) (database.Datastore, error) {
 	var pg pgSQL
 	var err error
@@ -102,6 +106,8 @@ func openDatabase(registrableComponentConfig database.RegistrableComponentConfig
 		return nil, fmt.Errorf("pgsql: could not open database: %v", err)
 	}
 
+
+
 	// Load fixture data.
 	if pg.config.FixturePath != "" {
 		log.Println("pgsql: loading fixtures")
@@ -118,14 +124,14 @@ func openDatabase(registrableComponentConfig database.RegistrableComponentConfig
 			return nil, fmt.Errorf("pgsql: an error occured while importing fixtures: %v", err)
 		}
 	}
+
 	// Initialize cache.
 	// TODO(Quentin-M): Benchmark with a simple LRU Cache.
 	if pg.config.CacheSize > 0 {
 		pg.cache, _ = lru.NewARC(pg.config.CacheSize)
 	}
 
-	//return &pg, nil
-	return nil,nil
+	return &pg, nil
 }
 
 func parseConnectionString(source string) (dbName string, pgSourceURL string, err error) {
@@ -147,7 +153,8 @@ func parseConnectionString(source string) (dbName string, pgSourceURL string, er
 	return
 }
 
-
+// createDatabase creates a new database.
+// The source parameter should not contain a dbname.
 func createDatabase(source, dbName string) error {
 	// Open database.
 	db, err := sql.Open("postgres", source)
@@ -165,7 +172,8 @@ func createDatabase(source, dbName string) error {
 	return nil
 }
 
-
+// dropDatabase drops an existing database.
+// The source parameter should not contain a dbname.
 func dropDatabase(source, dbName string) error {
 	// Open database.
 	db, err := sql.Open("postgres", source)
@@ -191,7 +199,8 @@ func dropDatabase(source, dbName string) error {
 	return nil
 }
 
-
+// handleError logs an error with an extra description and masks the error if it's an SQL one.
+// This ensures we never return plain SQL errors and leak anything.
 func handleError(desc string, err error) error {
 	if err == nil {
 		return nil
@@ -202,7 +211,7 @@ func handleError(desc string, err error) error {
 	}
 
 	if _, o := err.(*pq.Error); o || err == sql.ErrTxDone || strings.HasPrefix(err.Error(), "sql:") {
-		return commonerr.ErrBackendException
+		return database.ErrBackendException
 	}
 
 	return err

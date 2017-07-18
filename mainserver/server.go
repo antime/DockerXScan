@@ -86,7 +86,7 @@ func Boot(config *Config)  {
 	st.Begin()
 	go api.Test()
 	waitForSignals(syscall.SIGINT, syscall.SIGTERM)
-	st.Stop()
+	//st.Stop()
 }
 
 func main()  {

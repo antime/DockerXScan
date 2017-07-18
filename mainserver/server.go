@@ -92,7 +92,7 @@ func main()  {
 
 	//解析命令行参数
 	flag.CommandLine = flag.NewFlagSet(os.Args[0], flag.ExitOnError)
-	flagConfigPath := flag.String("config", "D://code//go/gopath//src//github.com//MXi4oyu//DockerXScan//mainserver//config.yaml", "Load configuration from the specified file.")
+	flagConfigPath := flag.String("config", "config.yaml", "Load configuration from the specified file.")
 
 	//加载配置文件
 	config,err:= LoadConfig(*flagConfigPath)

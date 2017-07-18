@@ -2,81 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e0cc8cda-7c4f-44d2-a6f7-e022f62dd404" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/common/commonerr/errors.go" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/common/stopper/stopper.go" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/database/database.go" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/database/pgsql/pgsql.go" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/database/severity.go" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/mainserver/config.go" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/mainserver/server.go" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vendor/github.com/hashicorp/golang-lru/.gitignore" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vendor/github.com/hashicorp/golang-lru/2q.go" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vendor/github.com/hashicorp/golang-lru/2q_test.go" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vendor/github.com/hashicorp/golang-lru/LICENSE" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vendor/github.com/hashicorp/golang-lru/README.md" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vendor/github.com/hashicorp/golang-lru/arc.go" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vendor/github.com/hashicorp/golang-lru/arc_test.go" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vendor/github.com/hashicorp/golang-lru/lru.go" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vendor/github.com/hashicorp/golang-lru/lru_test.go" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vendor/github.com/hashicorp/golang-lru/simplelru/lru.go" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vendor/github.com/hashicorp/golang-lru/simplelru/lru_test.go" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vendor/github.com/lib/pq/.gitignore" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vendor/github.com/lib/pq/.travis.sh" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vendor/github.com/lib/pq/.travis.yml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vendor/github.com/lib/pq/CONTRIBUTING.md" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vendor/github.com/lib/pq/LICENSE.md" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vendor/github.com/lib/pq/README.md" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vendor/github.com/lib/pq/array.go" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vendor/github.com/lib/pq/array_test.go" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vendor/github.com/lib/pq/bench_test.go" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vendor/github.com/lib/pq/buf.go" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vendor/github.com/lib/pq/certs/README" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vendor/github.com/lib/pq/certs/bogus_root.crt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vendor/github.com/lib/pq/certs/postgresql.crt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vendor/github.com/lib/pq/certs/postgresql.key" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vendor/github.com/lib/pq/certs/root.crt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vendor/github.com/lib/pq/certs/server.crt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vendor/github.com/lib/pq/certs/server.key" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vendor/github.com/lib/pq/conn.go" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vendor/github.com/lib/pq/conn_go18.go" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vendor/github.com/lib/pq/conn_test.go" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vendor/github.com/lib/pq/copy.go" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vendor/github.com/lib/pq/copy_test.go" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vendor/github.com/lib/pq/doc.go" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vendor/github.com/lib/pq/encode.go" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vendor/github.com/lib/pq/encode_test.go" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vendor/github.com/lib/pq/error.go" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vendor/github.com/lib/pq/go18_test.go" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vendor/github.com/lib/pq/hstore/hstore.go" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vendor/github.com/lib/pq/hstore/hstore_test.go" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vendor/github.com/lib/pq/issues_test.go" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vendor/github.com/lib/pq/listen_example/doc.go" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vendor/github.com/lib/pq/notify.go" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vendor/github.com/lib/pq/notify_test.go" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vendor/github.com/lib/pq/oid/doc.go" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vendor/github.com/lib/pq/oid/gen.go" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vendor/github.com/lib/pq/oid/types.go" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vendor/github.com/lib/pq/ssl.go" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vendor/github.com/lib/pq/ssl_go1.7.go" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vendor/github.com/lib/pq/ssl_permissions.go" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vendor/github.com/lib/pq/ssl_renegotiation.go" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vendor/github.com/lib/pq/ssl_test.go" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vendor/github.com/lib/pq/ssl_windows.go" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vendor/github.com/lib/pq/url.go" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vendor/github.com/lib/pq/url_test.go" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vendor/github.com/lib/pq/user_posix.go" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vendor/github.com/lib/pq/user_windows.go" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vendor/github.com/lib/pq/uuid.go" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vendor/github.com/lib/pq/uuid_test.go" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vendor/github.com/remind101/migrate/.gitignore" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vendor/github.com/remind101/migrate/.travis.yml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vendor/github.com/remind101/migrate/LICENSE" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vendor/github.com/remind101/migrate/README.md" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vendor/github.com/remind101/migrate/example_test.go" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vendor/github.com/remind101/migrate/migrate.go" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vendor/github.com/remind101/migrate/migrate_test.go" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/mainserver/config.go" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/database/models.go" afterPath="$PROJECT_DIR$/database/models.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/mainserver/server.go" afterPath="$PROJECT_DIR$/mainserver/server.go" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -91,48 +19,9 @@
       <file leaf-file-name="server.go" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/mainserver/server.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="378">
-              <caret line="36" column="27" lean-forward="false" selection-start-line="36" selection-start-column="27" selection-end-line="36" selection-end-column="27" />
-              <folding>
-                <element signature="e#14#251#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="stopper.go" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/common/stopper/stopper.go">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="27">
-              <caret line="1" column="0" lean-forward="true" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
-              <folding>
-                <element signature="e#17#43#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="config.go" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/mainserver/config.go">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-261">
-              <caret line="26" column="5" lean-forward="true" selection-start-line="26" selection-start-column="5" selection-end-line="26" selection-end-column="5" />
-              <folding>
-                <element signature="e#14#116#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="pgsql.go" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/database/pgsql/pgsql.go">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2727">
-              <caret line="101" column="5" lean-forward="false" selection-start-line="101" selection-start-column="5" selection-end-line="101" selection-end-column="5" />
-              <folding>
-                <element signature="e#15#260#0" expanded="true" />
-                <marker date="1500367656720" expanded="true" signature="4136:4283" ph="SELECT pg_te... pg_stat_activity" />
-              </folding>
+            <state relative-caret-position="459">
+              <caret line="17" column="12" lean-forward="true" selection-start-line="17" selection-start-column="12" selection-end-line="17" selection-end-column="12" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -181,7 +70,6 @@
         <option value="$PROJECT_DIR$/featurefmt/dpkg/dpkg.go" />
         <option value="$PROJECT_DIR$/featurefmt/rpm/rpm.go" />
         <option value="$PROJECT_DIR$/featurens/driver.go" />
-        <option value="$PROJECT_DIR$/main.go" />
         <option value="$PROJECT_DIR$/analyzeimages/analyzeimages.go" />
         <option value="$PROJECT_DIR$/database/database.go" />
         <option value="$PROJECT_DIR$/database/models.go" />
@@ -189,8 +77,9 @@
         <option value="$PROJECT_DIR$/mainserver/main.go" />
         <option value="$PROJECT_DIR$/vendor/github.com/hashicorp/golang-lru/2q.go" />
         <option value="$PROJECT_DIR$/database/pgsql/pgsql.go" />
-        <option value="$PROJECT_DIR$/mainserver/config.go" />
         <option value="$PROJECT_DIR$/common/stopper/stopper.go" />
+        <option value="$PROJECT_DIR$/main.go" />
+        <option value="$PROJECT_DIR$/mainserver/config.go" />
         <option value="$PROJECT_DIR$/mainserver/server.go" />
       </list>
     </option>
@@ -246,7 +135,7 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="common" />
+              <option name="myItemId" value="mainserver" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -539,6 +428,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="189">
           <caret line="7" column="46" lean-forward="false" selection-start-line="7" selection-start-column="46" selection-end-line="7" selection-end-column="46" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -546,6 +436,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="6912">
           <caret line="256" column="1" lean-forward="false" selection-start-line="256" selection-start-column="1" selection-end-line="256" selection-end-column="1" />
+          <folding>
+            <element signature="e#13#129#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -567,6 +460,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="54">
           <caret line="2" column="0" lean-forward="false" selection-start-line="2" selection-start-column="0" selection-end-line="11" selection-end-column="1" />
+          <folding>
+            <element signature="e#19#287#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -574,6 +470,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="54">
           <caret line="2" column="8" lean-forward="false" selection-start-line="2" selection-start-column="8" selection-end-line="2" selection-end-column="8" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -621,6 +518,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="245">
           <caret line="45" column="5" lean-forward="false" selection-start-line="45" selection-start-column="5" selection-end-line="45" selection-end-column="5" />
+          <folding>
+            <element signature="e#19#129#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -638,6 +538,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-513">
           <caret line="2" column="0" lean-forward="false" selection-start-line="2" selection-start-column="0" selection-end-line="11" selection-end-column="1" />
+          <folding>
+            <element signature="e#20#288#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -645,6 +548,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-19">
           <caret line="26" column="59" lean-forward="false" selection-start-line="26" selection-start-column="51" selection-end-line="26" selection-end-column="59" />
+          <folding>
+            <element signature="e#23#251#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -768,10 +674,20 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/common/stopper/stopper.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-21">
+          <caret line="1" column="0" lean-forward="true" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
+          <folding>
+            <element signature="e#17#43#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/database/pgsql/pgsql.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2727">
-          <caret line="101" column="5" lean-forward="false" selection-start-line="101" selection-start-column="5" selection-end-line="101" selection-end-column="5" />
+        <state relative-caret-position="-1485">
+          <caret line="14" column="1" lean-forward="true" selection-start-line="14" selection-start-column="1" selection-end-line="14" selection-end-column="1" />
           <folding>
             <element signature="e#15#260#0" expanded="true" />
             <marker date="1500367656720" expanded="true" signature="4136:4283" ph="SELECT pg_te... pg_stat_activity" />
@@ -781,39 +697,27 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/main.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="201">
-          <caret line="15" column="62" lean-forward="true" selection-start-line="15" selection-start-column="62" selection-end-line="15" selection-end-column="62" />
-          <folding />
+        <state relative-caret-position="0">
+          <caret line="0" column="12" lean-forward="true" selection-start-line="0" selection-start-column="12" selection-end-line="0" selection-end-column="12" />
+          <folding>
+            <element signature="e#14#568#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/mainserver/config.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-261">
-          <caret line="26" column="5" lean-forward="true" selection-start-line="26" selection-start-column="5" selection-end-line="26" selection-end-column="5" />
-          <folding>
-            <element signature="e#14#116#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/common/stopper/stopper.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="27">
-          <caret line="1" column="0" lean-forward="true" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
-          <folding>
-            <element signature="e#17#43#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="270">
+          <caret line="10" column="0" lean-forward="false" selection-start-line="10" selection-start-column="0" selection-end-line="10" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/mainserver/server.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="378">
-          <caret line="36" column="27" lean-forward="false" selection-start-line="36" selection-start-column="27" selection-end-line="36" selection-end-column="27" />
-          <folding>
-            <element signature="e#14#251#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="459">
+          <caret line="17" column="12" lean-forward="true" selection-start-line="17" selection-start-column="12" selection-end-line="17" selection-end-column="12" />
+          <folding />
         </state>
       </provider>
     </entry>

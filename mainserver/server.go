@@ -13,7 +13,56 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"io/ioutil"
+	"gopkg.in/yaml.v2"
+	"errors"
 )
+
+var ErrDatasourceNotLoaded = errors.New("could not load configuration: no database source specified")
+
+type File struct {
+	Clair Config `yaml:"clair"`
+}
+
+type Config struct {
+	Database database.RegistrableComponentConfig
+}
+
+func DefaultConfig() Config  {
+
+	return Config{
+		Database:database.RegistrableComponentConfig{
+			Type:"pgsql",
+		},
+	}
+}
+
+func LoadConfig(path string) (config *Config, err error) {
+
+	var cfgFile File
+	cfgFile.Clair = DefaultConfig()
+	if path == "" {
+		return &cfgFile.Clair, nil
+	}
+
+	f, err := os.Open(os.ExpandEnv(path))
+	if err != nil {
+		return
+	}
+	defer f.Close()
+
+	d, err := ioutil.ReadAll(f)
+	if err != nil {
+		return
+	}
+
+	err = yaml.Unmarshal(d, &cfgFile)
+	if err != nil {
+		return
+	}
+	config = &cfgFile.Clair
+	return
+}
 
 //中断
 func waitForSignals(signals ...os.Signal) {
@@ -42,6 +91,7 @@ func Boot(config *Config)  {
 func main()  {
 
 	//解析命令行参数
+	flag.CommandLine = flag.NewFlagSet(os.Args[0], flag.ExitOnError)
 	flagConfigPath := flag.String("config", "/etc/clair/config.yaml", "Load configuration from the specified file.")
 
 	//加载配置文件

@@ -1,0 +1,27 @@
+-- Table: public.namespace
+
+-- DROP TABLE public.namespace;
+
+CREATE TABLE public.namespace
+(
+    id serial,
+    name character varying(128) COLLATE pg_catalog."default",
+    version_format character varying(256) COLLATE pg_catalog."default",
+    CONSTRAINT namespace_pkey PRIMARY KEY (id)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.namespace
+    OWNER to postgres;
+
+-- Index: namespace_name_key
+
+-- DROP INDEX public.namespace_name_key;
+
+CREATE UNIQUE INDEX namespace_name_key
+    ON public.namespace USING btree
+    (name COLLATE pg_catalog."default")
+    TABLESPACE pg_default;

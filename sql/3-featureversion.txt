@@ -1,0 +1,40 @@
+-- Table: public.featureversion
+
+-- DROP TABLE public.featureversion;
+
+CREATE TABLE public.featureversion
+(
+    id serial,
+    feature_id integer NOT NULL,
+    version character varying(128) COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT featureversion_pkey PRIMARY KEY (id),
+    CONSTRAINT featureversion_feature_id_fkey FOREIGN KEY (feature_id)
+        REFERENCES public.feature (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.featureversion
+    OWNER to postgres;
+
+-- Index: featureversion_feature_id_idx
+
+-- DROP INDEX public.featureversion_feature_id_idx;
+
+CREATE INDEX featureversion_feature_id_idx
+    ON public.featureversion USING btree
+    (feature_id)
+    TABLESPACE pg_default;
+
+-- Index: featureversion_feature_id_version_key
+
+-- DROP INDEX public.featureversion_feature_id_version_key;
+
+CREATE UNIQUE INDEX featureversion_feature_id_version_key
+    ON public.featureversion USING btree
+    (feature_id, version COLLATE pg_catalog."default")
+    TABLESPACE pg_default;

@@ -27,6 +27,7 @@ type File struct {
 
 type Config struct {
 	Database database.RegistrableComponentConfig
+	API      *api.Config
 }
 
 func DefaultConfig() Config  {
@@ -84,7 +85,7 @@ func Boot(config *Config)  {
 	}
 	defer db.Close()
 	st.Begin()
-	go api.Test()
+	go api.Run(config.API,db,st)
 	waitForSignals(syscall.SIGINT, syscall.SIGTERM)
 	//st.Stop()
 }

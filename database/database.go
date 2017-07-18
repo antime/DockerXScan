@@ -3,7 +3,6 @@ package database
 import (
 	"errors"
 	"fmt"
-	"time"
 )
 
 var (

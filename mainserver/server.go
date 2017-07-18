@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	//注册数据库驱动
-	_ "github.com/MXi4oyu/DockerXScan/database/pgsql"
+	_"github.com/MXi4oyu/DockerXScan/database/pgsql"
 	"flag"
 	"github.com/MXi4oyu/DockerXScan/database"
 	"github.com/MXi4oyu/DockerXScan/common/stopper"
@@ -16,6 +16,7 @@ import (
 	"io/ioutil"
 	"gopkg.in/yaml.v2"
 	"errors"
+	"github.com/MXi4oyu/DockerXScan/api"
 )
 
 var ErrDatasourceNotLoaded = errors.New("could not load configuration: no database source specified")
@@ -83,7 +84,7 @@ func Boot(config *Config)  {
 	}
 	defer db.Close()
 	st.Begin()
-	fmt.Println("testing...")
+	go api.Test()
 	waitForSignals(syscall.SIGINT, syscall.SIGTERM)
 	st.Stop()
 }

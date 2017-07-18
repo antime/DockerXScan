@@ -14,9 +14,10 @@ import (
 	"github.com/hashicorp/golang-lru"
 )
 
-func Init()  {
+func init()  {
 	//注册数据库驱动
 	database.Register("pgsql", openDatabase)
+	fmt.Println("init pgsql")
 }
 
 type Queryer interface {

@@ -56,5 +56,11 @@ func Open(cfg RegistrableComponentConfig) (Datastore, error) {
 // Datastore represents the required operations on a persistent data store for
 // a Clair deployment.
 type Datastore interface {
+	//关闭数据
+	Close()
+	//插入namespace
 	InsertNamespace(namespace Namespace) (int ,error)
+	//查询namespace
+	ListNamespaces() ([]Namespace, error)
+
 }

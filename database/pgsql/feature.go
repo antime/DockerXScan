@@ -112,8 +112,7 @@ func (pgSQL *pgSQL) InsertFeatureVersion(fv database.FeatureVersion) (id int, er
 
 	}
 
-	//err = linkFeatureVersionToVulnerabilities(tx, fv)
-
+	err = linkFeatureVersionToVulnerabilities(tx, fv)
 	if err != nil {
 		tx.Rollback()
 		return 0, err
@@ -130,5 +129,55 @@ func (pgSQL *pgSQL) InsertFeatureVersion(fv database.FeatureVersion) (id int, er
 	}
 
 	return fv.ID, nil
+
+}
+
+type vulnerabilityAffectsFeatureVersion struct {
+	vulnerabilityID int
+	fixedInID       int
+	fixedInVersion  string
+}
+
+
+func linkFeatureVersionToVulnerabilities(tx *sql.Tx, featureVersion database.FeatureVersion) error{
+	rows, err := tx.Query(searchVulnerabilityFixedInFeature, featureVersion.Feature.ID)
+	if err != nil {
+		return handleError("searchVulnerabilityFixedInFeature", err)
+	}
+	defer rows.Close()
+
+	var affects []vulnerabilityAffectsFeatureVersion
+	for rows.Next() {
+		var affect vulnerabilityAffectsFeatureVersion
+
+		err := rows.Scan(&affect.fixedInID, &affect.vulnerabilityID, &affect.fixedInVersion)
+		if err != nil {
+			return handleError("searchVulnerabilityFixedInFeature.Scan()", err)
+		}
+
+		cmp, err := versionfmt.Compare(featureVersion.Feature.Namespace.VersionFormat, featureVersion.Version, affect.fixedInVersion)
+		if err != nil {
+			return err
+		}
+		if cmp < 0 {
+			affects = append(affects, affect)
+		}
+	}
+	if err = rows.Err(); err != nil {
+		return handleError("searchVulnerabilityFixedInFeature.Rows()", err)
+	}
+	rows.Close()
+
+	// Insert into Vulnerability_Affects_FeatureVersion.
+	for _, affect := range affects {
+		// TODO(Quentin-M): Batch me.
+		_, err := tx.Exec(insertVulnerabilityAffectsFeatureVersion, affect.vulnerabilityID,
+			featureVersion.ID, affect.fixedInID)
+		if err != nil {
+			return handleError("insertVulnerabilityAffectsFeatureVersion", err)
+		}
+	}
+
+	return nil
 
 }

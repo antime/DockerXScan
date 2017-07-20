@@ -61,3 +61,24 @@ func (pgSQL *pgSQL)InsertLayer(layer database.Layer) error {
 	return nil
 
 }
+
+//删除一个layer
+func (pgSQL *pgSQL) DeleteLayer(name string) error {
+
+	result, err := pgSQL.Exec(removeLayer, name)
+	if err != nil {
+		return handleError("removeLayer", err)
+	}
+
+	affected, err := result.RowsAffected()
+	if err != nil {
+		return handleError("removeLayer.RowsAffected()", err)
+	}
+
+	if affected <= 0 {
+		return commonerr.ErrNotFound
+	}
+
+	return nil
+}
+

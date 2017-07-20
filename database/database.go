@@ -65,4 +65,7 @@ type Datastore interface {
 	//插入layer
 	InsertLayer(Layer) error
 
+	//删除layer
+	DeleteLayer(name string) error
+
 }

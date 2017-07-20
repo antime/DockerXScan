@@ -113,11 +113,11 @@ const (
 						AND v.deleted_at IS NULL`
 
 	insertLayer = `
-		INSERT INTO Layer(name, engineversion, parent_id, namespace_id, created_at)
-    VALUES($1, $2, $3, $4, CURRENT_TIMESTAMP)
+		INSERT INTO Layer(name, parent_id, created_at)
+    VALUES($1, $2, CURRENT_TIMESTAMP)
     RETURNING id`
 
-	updateLayer = `UPDATE LAYER SET engineversion = $2, namespace_id = $3 WHERE id = $1`
+	updateLayer = `UPDATE LAYER SET name = $2 WHERE id = $1`
 
 	removeLayerDiffFeatureVersion = `
 		DELETE FROM Layer_diff_FeatureVersion

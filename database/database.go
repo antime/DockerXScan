@@ -62,5 +62,7 @@ type Datastore interface {
 	InsertNamespace(namespace Namespace) (int ,error)
 	//查询namespace
 	ListNamespaces() ([]Namespace, error)
+	//插入layer
+	InsertLayer(Layer) error
 
 }

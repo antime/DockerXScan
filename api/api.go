@@ -35,7 +35,13 @@ func Run(cfg *Config, store database.Datastore, st *stopper.Stopper)  {
 	})
 
 	//删除一个layer
-	store.DeleteLayer("77935dbf418a0abf8e9276ef3df3d79af1f3afded45e1d8a7f87ed6e09057df1")
+	//store.DeleteLayer("77935dbf418a0abf8e9276ef3df3d79af1f3afded45e1d8a7f87ed6e09057df1")
+
+	//查询一个layer
+	layer,_:=store.FindLayer("77935dbf418a0abf8e9276ef3df3d79af1f3afded45e1d8a7f87ed6e09057df1",false,false)
+	fmt.Println(layer)
+
+
 
 	defer st.End()
 }

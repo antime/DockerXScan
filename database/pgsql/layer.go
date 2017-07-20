@@ -62,6 +62,37 @@ func (pgSQL *pgSQL)InsertLayer(layer database.Layer) error {
 
 }
 
+func (pgSQL *pgSQL) FindLayer(name string, withFeatures, withVulnerabilities bool) (database.Layer, error){
+
+	var(
+		layer           database.Layer
+		parentID        zero.Int
+		parentName      zero.String
+	)
+
+	err:=pgSQL.QueryRow(searchLayer,name).Scan(
+		&layer.ID,
+		&layer.Name,
+		&parentID,
+		&parentName,
+	)
+
+	if err != nil {
+		return layer, handleError("searchLayer", err)
+	}
+
+	if !parentID.IsZero() {
+		layer.Parent = &database.Layer{
+			Model: database.Model{ID: int(parentID.Int64)},
+			Name:  parentName.String,
+		}
+	}
+
+
+	return layer,nil
+
+}
+
 //删除一个layer
 func (pgSQL *pgSQL) DeleteLayer(name string) error {
 

@@ -15,6 +15,9 @@ type Layer struct {
 	Model
 	Name          string
 	ParentID      int
+	Parent        *Layer
+	Namespace     *Namespace
+	Features      []FeatureVersion
 }
 
 type Namespace struct {

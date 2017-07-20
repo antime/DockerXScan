@@ -74,4 +74,8 @@ type Datastore interface {
 	//插入特征
 	InsertFeature(feature Feature) (int, error)
 
+	//插入特征版本
+	InsertFeatureVersion(fv FeatureVersion) (id int, err error)
+
+
 }

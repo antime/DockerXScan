@@ -47,9 +47,24 @@ func Run(cfg *Config, store database.Datastore, st *stopper.Stopper)  {
 			Name:"debian:8",
 			VersionFormat:dpkg.ParserName,
 		},
-		Name:"glibc",
+		Name:"nginx",
 	}
 	store.InsertFeature(feature)
+
+	//插入特征版本
+	featureVersion := database.FeatureVersion{
+		Feature:database.Feature{
+			Namespace:database.Namespace{
+				Name:"debian:8",
+				VersionFormat:dpkg.ParserName,
+			},
+			Name:"nginx",
+		},
+		Version:"2.3.0",
+	}
+
+	store.InsertFeatureVersion(featureVersion)
+
 
 	defer st.End()
 }

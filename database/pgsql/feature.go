@@ -3,6 +3,9 @@ package pgsql
 import (
 	"github.com/MXi4oyu/DockerXScan/database"
 	"github.com/MXi4oyu/DockerXScan/common/commonerr"
+	"github.com/MXi4oyu/DockerXScan/versionfmt"
+	"strings"
+	"database/sql"
 )
 
 func (pgSQL *pgSQL) InsertFeature(feature database.Feature) (int, error) {
@@ -35,9 +38,97 @@ func (pgSQL *pgSQL) InsertFeature(feature database.Feature) (int, error) {
 	}
 
 	return id, nil
+}
+
+//插入特征版本
+func (pgSQL *pgSQL) InsertFeatureVersion(fv database.FeatureVersion) (id int, err error){
+
+	err = versionfmt.Valid(fv.Feature.Namespace.VersionFormat, fv.Version)
+	if err != nil {
+		return 0, commonerr.NewBadRequestError("could not find/insert invalid FeatureVersion")
+	}
+
+	cacheIndex := strings.Join([]string{"featureversion", fv.Feature.Namespace.Name, fv.Feature.Name, fv.Version}, ":")
+
+	if pgSQL.cache != nil {
+
+		id, found := pgSQL.cache.Get(cacheIndex)
+		if found {
+			return id.(int), nil
+		}
+	}
+
+	featureID, err := pgSQL.InsertFeature(fv.Feature)
+
+	if err != nil {
+		return 0, err
+	}
+
+	fv.Feature.ID = featureID
+
+	err = pgSQL.QueryRow(searchFeatureVersion, featureID, fv.Version).Scan(&fv.ID)
+	if err != nil && err != sql.ErrNoRows {
+		return 0, handleError("searchFeatureVersion", err)
+	}
+	if err == nil {
+		if pgSQL.cache != nil {
+			pgSQL.cache.Add(cacheIndex, fv.ID)
+		}
+
+		return fv.ID, nil
+	}
 
 
+	// Begin transaction.
+	tx, err := pgSQL.Begin()
+	if err != nil {
+		tx.Rollback()
+		return 0, handleError("insertFeatureVersion.Begin()", err)
+	}
 
+	if err != nil {
+		tx.Rollback()
+		return 0, handleError("insertFeatureVersion.lockVulnerabilityAffects", err)
+	}
 
+	// Find or create FeatureVersion.
+	var created bool
+
+	err = tx.QueryRow(soiFeatureVersion, featureID, fv.Version).Scan(&created, &fv.ID)
+
+	if err != nil {
+		tx.Rollback()
+		return 0, handleError("soiFeatureVersion", err)
+	}
+
+	if !created {
+		tx.Commit()
+
+		if pgSQL.cache != nil {
+			pgSQL.cache.Add(cacheIndex, fv.ID)
+		}
+
+		return fv.ID, nil
+
+	}
+
+	//err = linkFeatureVersionToVulnerabilities(tx, fv)
+
+	if err != nil {
+		tx.Rollback()
+		return 0, err
+	}
+
+	// Commit transaction.
+	err = tx.Commit()
+	if err != nil {
+		return 0, handleError("insertFeatureVersion.Commit()", err)
+	}
+
+	if pgSQL.cache != nil {
+		pgSQL.cache.Add(cacheIndex, fv.ID)
+	}
+
+	return fv.ID, nil
 
 }

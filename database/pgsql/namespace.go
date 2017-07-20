@@ -40,7 +40,7 @@ func (pgSQL *pgSQL) ListNamespaces()  (namespaces []database.Namespace, err erro
 	}
 	defer rows.Close()
 
-	if rows.Next(){
+	for rows.Next(){
 		var ns database.Namespace
 		err = rows.Scan(&ns.ID,&ns.Name,ns.VersionFormat)
 		if err != nil {

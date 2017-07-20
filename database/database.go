@@ -77,5 +77,8 @@ type Datastore interface {
 	//插入特征版本
 	InsertFeatureVersion(fv FeatureVersion) (id int, err error)
 
+	//列出漏洞
+	ListVulnerabilities(namespaceName string, limit int, page int) ([]Vulnerability, int, error)
+
 
 }

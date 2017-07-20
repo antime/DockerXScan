@@ -14,14 +14,9 @@ func (pgSQL *pgSQL)InsertLayer(layer database.Layer) error {
 		return commonerr.NewBadRequestError("could not insert a layer which has an empty Name")
 	}
 
+	//parentID
 	var parentID zero.Int
-	if layer.Parent != nil {
-		if layer.Parent.ID==0{
-			return commonerr.NewBadRequestError("Parent is expected to be retrieved from database when inserting a layer.")
-		}
-
-		parentID = zero.IntFrom(int64(layer.Parent.ID))
-	}
+	parentID = zero.IntFrom(int64(layer.ParentID))
 
 	// Begin transaction.
 	tx,err:=pgSQL.Begin()

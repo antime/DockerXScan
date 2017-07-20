@@ -13,12 +13,8 @@ type Model struct {
 
 type Layer struct {
 	Model
-
 	Name          string
-	EngineVersion int
-	Parent        *Layer
-	Namespace     *Namespace
-	Features      []FeatureVersion
+	ParentID      int
 }
 
 type Namespace struct {

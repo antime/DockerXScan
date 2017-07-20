@@ -41,7 +41,15 @@ func Run(cfg *Config, store database.Datastore, st *stopper.Stopper)  {
 	layer,_:=store.FindLayer("77935dbf418a0abf8e9276ef3df3d79af1f3afded45e1d8a7f87ed6e09057df1",false,false)
 	fmt.Println(layer)
 
-
+	//插入一个特征
+	feature := database.Feature{
+		Namespace:database.Namespace{
+			Name:"debian:8",
+			VersionFormat:dpkg.ParserName,
+		},
+		Name:"glibc",
+	}
+	store.InsertFeature(feature)
 
 	defer st.End()
 }

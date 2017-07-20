@@ -71,4 +71,7 @@ type Datastore interface {
 	//删除layer
 	DeleteLayer(name string) error
 
+	//插入特征
+	InsertFeature(feature Feature) (int, error)
+
 }

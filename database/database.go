@@ -80,5 +80,8 @@ type Datastore interface {
 	//列出漏洞
 	ListVulnerabilities(namespaceName string, limit int, page int) ([]Vulnerability, int, error)
 
+	//插入漏洞
+	InsertVulnerabilities(vulnerabilities []Vulnerability, createNotification bool) error
+
 
 }

@@ -95,7 +95,7 @@ func Run(cfg *Config, store database.Datastore, st *stopper.Stopper)  {
 	}
 
 	//查找漏洞
-	vuls,_:=store.FindVulnerability("TestInsertVulnerabilityDescription1","TestInsertVulnerability1")
+	vuls,_:=store.FindVulnerability("TestInsertVulnerabilityNamespace1","TestInsertVulnerability1")
 	fmt.Println(vuls)
 
 	defer st.End()

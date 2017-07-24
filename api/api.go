@@ -67,44 +67,31 @@ func Run(cfg *Config, store database.Datastore, st *stopper.Stopper)  {
 
 	//插入一个漏洞
 
-	n1 := database.Namespace{
-		Name:          "TestInsertVulnerabilityNamespace1",
-		VersionFormat: dpkg.ParserName,
-	}
-
-	f1 := database.FeatureVersion{
-		Feature: database.Feature{
-			Name:      "TestInsertVulnerabilityFeatureVersion1",
-			Namespace: n1,
-		},
-		Version: "1.0",
-	}
-
 	v1meta := make(map[string]interface{})
-
 	v1meta["TestInsertVulnerabilityMetadata1"] = "TestInsertVulnerabilityMetadataValue1"
-	v1meta["TestInsertVulnerabilityMetadata2"] = struct {
-		Test string
-	}{
-		Test: "TestInsertVulnerabilityMetadataValue1",
-	}
 
 	v1 := database.Vulnerability{
 		Name:        "TestInsertVulnerability1",
-		Namespace:   n1,
-		FixedIn:     []database.FeatureVersion{f1},
+		Namespace:   database.Namespace{
+			Name:          "TestInsertVulnerabilityNamespace1",
+			VersionFormat: dpkg.ParserName,
+		},
+		FixedIn:     []database.FeatureVersion{database.FeatureVersion{
+			Feature: database.Feature{
+				Name:      "TestInsertVulnerabilityFeatureVersion1",
+			},
+			Version: "1.0",
+		}},
 		Severity:    database.LowSeverity,
 		Description: "TestInsertVulnerabilityDescription1",
 		Link:        "TestInsertVulnerabilityLink1",
 		Metadata:    v1meta,
 	}
 
-	err:= store.InsertVulnerabilities([]database.Vulnerability{v1}, true)
-
-	if err !=nil{
-		fmt.Println(err.Error())
+	err:= store.InsertVulnerabilities([]database.Vulnerability{v1}, false)
+	if err!=nil{
+		fmt.Println(err)
 	}
-
 
 	defer st.End()
 }

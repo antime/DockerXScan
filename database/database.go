@@ -83,5 +83,8 @@ type Datastore interface {
 	//插入漏洞
 	InsertVulnerabilities(vulnerabilities []Vulnerability, createNotification bool) error
 
+	//查找漏洞
+	FindVulnerability(namespaceName, name string) (Vulnerability, error)
+
 
 }

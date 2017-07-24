@@ -87,11 +87,16 @@ func Run(cfg *Config, store database.Datastore, st *stopper.Stopper)  {
 		Link:        "TestInsertVulnerabilityLink1",
 		Metadata:    v1meta,
 	}
-
+	//先不创建notification，在v0.3版本再添加
+	//先不创建notification，在v0.3版本再添加
 	err:= store.InsertVulnerabilities([]database.Vulnerability{v1}, false)
 	if err!=nil{
 		fmt.Println(err)
 	}
+
+	//查找漏洞
+	vuls,_:=store.FindVulnerability("TestInsertVulnerabilityDescription1","TestInsertVulnerability1")
+	fmt.Println(vuls)
 
 	defer st.End()
 }

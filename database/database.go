@@ -86,5 +86,13 @@ type Datastore interface {
 	//查找漏洞
 	FindVulnerability(namespaceName, name string) (Vulnerability, error)
 
+	//插入漏洞修复
+	InsertVulnerabilityFixes(vulnerabilityNamespace, vulnerabilityName string, fixes []FeatureVersion) error
+
+	//删除漏洞
+	DeleteVulnerability(namespaceName, name string) error
+
+	//删除漏洞修复
+	DeleteVulnerabilityFix(vulnerabilityNamespace, vulnerabilityName, featureName string) error
 
 }

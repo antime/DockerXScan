@@ -98,5 +98,8 @@ func Run(cfg *Config, store database.Datastore, st *stopper.Stopper)  {
 	vuls,_:=store.FindVulnerability("TestInsertVulnerabilityNamespace1","TestInsertVulnerability1")
 	fmt.Println(vuls)
 
+	//插入漏洞修复
+	err=store.InsertVulnerabilityFixes("TestInsertVulnerabilityNamespace1","TestInsertVulnerability1",[]database.FeatureVersion{})
+
 	defer st.End()
 }

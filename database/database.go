@@ -95,4 +95,6 @@ type Datastore interface {
 	//删除漏洞修复
 	DeleteVulnerabilityFix(vulnerabilityNamespace, vulnerabilityName, featureName string) error
 
+	GetKeyValue(key string) (string, error)
+
 }

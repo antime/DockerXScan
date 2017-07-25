@@ -17,6 +17,7 @@ import (
 	"gopkg.in/yaml.v2"
 	"errors"
 	"github.com/MXi4oyu/DockerXScan/api"
+	"github.com/MXi4oyu/DockerXScan/updater"
 )
 
 var ErrDatasourceNotLoaded = errors.New("could not load configuration: no database source specified")
@@ -27,7 +28,7 @@ type File struct {
 
 type Config struct {
 	Database database.RegistrableComponentConfig
-	Updater  *UpdaterConfig
+	Updater  *updater.UpdaterConfig
 	API      *api.Config
 }
 
@@ -90,7 +91,7 @@ func Boot(config *Config)  {
 
 	//漏洞更新
 	st.Begin()
-	go RunUpdater(config.Updater,db,st)
+	go updater.RunUpdater(config.Updater,db,st)
 	waitForSignals(syscall.SIGINT, syscall.SIGTERM)
 	//st.Stop()
 }

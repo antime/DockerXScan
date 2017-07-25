@@ -102,24 +102,6 @@ func Run(cfg *Config, store database.Datastore, st *stopper.Stopper)  {
 	err=store.InsertVulnerabilityFixes("TestInsertVulnerabilityNamespace1","TestInsertVulnerability1",[]database.FeatureVersion{})
 
 	//更新漏洞库
-	fv1 := database.FeatureVersion{
-		Feature: database.Feature{
-			Namespace: database.Namespace{Name: "debian:7"},
-			Name:      "gcc-4.8",
-		},
-		Version: "0.1",
-	}
-
-	vulnerability := database.Vulnerability{
-		Name:    "DoVulnerabilityNamespacing",
-		FixedIn: []database.FeatureVersion{fv1},
-	}
-
-	vulnerabilities := DoVulnerabilitiesNamespacing([]database.Vulnerability{vulnerability})
-
-	for _,vuln:=range vulnerabilities{
-		fmt.Printf("%#v\n",vuln)
-	}
 
 
 	defer st.End()

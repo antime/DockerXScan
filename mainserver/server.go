@@ -27,6 +27,7 @@ type File struct {
 
 type Config struct {
 	Database database.RegistrableComponentConfig
+	Updater  *UpdaterConfig
 	API      *api.Config
 }
 
@@ -86,6 +87,10 @@ func Boot(config *Config)  {
 	defer db.Close()
 	st.Begin()
 	go api.Run(config.API,db,st)
+
+	//漏洞更新
+	st.Begin()
+	go RunUpdater(config.Updater,db,st)
 	waitForSignals(syscall.SIGINT, syscall.SIGTERM)
 	//st.Stop()
 }

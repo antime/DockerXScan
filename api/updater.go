@@ -1,4 +1,4 @@
-package main
+package api
 
 import (
 	"math/rand"
@@ -190,7 +190,7 @@ func fetch(datastore database.Datastore) (bool, []database.Vulnerability, map[st
 	for i := 0; i < len(vulnsrc.Updaters()); i++ {
 		resp := <-responseC
 		if resp != nil {
-			vulnerabilities = append(vulnerabilities, doVulnerabilitiesNamespacing(resp.Vulnerabilities)...)
+			vulnerabilities = append(vulnerabilities, DoVulnerabilitiesNamespacing(resp.Vulnerabilities)...)
 			notes = append(notes, resp.Notes...)
 			if resp.FlagName != "" && resp.FlagValue != "" {
 				flags[resp.FlagName] = resp.FlagValue
@@ -297,7 +297,7 @@ func (lv *lockableVulnerability) appendFunc(metadataKey string, metadata interfa
 // It helps simplifying the fetchers that share the same metadata about a
 // Vulnerability regardless of their actual namespace (ie. same vulnerability
 // information for every version of a distro).
-func doVulnerabilitiesNamespacing(vulnerabilities []database.Vulnerability) []database.Vulnerability {
+func DoVulnerabilitiesNamespacing(vulnerabilities []database.Vulnerability) []database.Vulnerability {
 	vulnerabilitiesMap := make(map[string]*database.Vulnerability)
 
 	for _, v := range vulnerabilities {

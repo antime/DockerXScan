@@ -3,6 +3,7 @@ package database
 import (
 	"errors"
 	"fmt"
+	"time"
 )
 
 var (
@@ -95,6 +96,14 @@ type Datastore interface {
 	//删除漏洞修复
 	DeleteVulnerabilityFix(vulnerabilityNamespace, vulnerabilityName, featureName string) error
 
+	InsertKeyValue(key, value string) error
+
 	GetKeyValue(key string) (string, error)
+
+	Lock(name string, owner string, duration time.Duration, renew bool) (bool, time.Time)
+
+	Unlock(name, owner string)
+
+	FindLock(name string) (string, time.Time, error)
 
 }

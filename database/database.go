@@ -106,4 +106,11 @@ type Datastore interface {
 
 	FindLock(name string) (string, time.Time, error)
 
+	GetAvailableNotification(renotifyInterval time.Duration) (VulnerabilityNotification, error)
+
+	GetNotification(name string, limit int, page VulnerabilityNotificationPageNumber) (VulnerabilityNotification, VulnerabilityNotificationPageNumber, error)
+
+	SetNotificationNotified(name string) error
+
+	DeleteNotification(name string) error
 }

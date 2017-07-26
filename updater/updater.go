@@ -152,6 +152,10 @@ func setUpdaterDuration(start time.Time) {
 	promUpdaterDurationSeconds.Set(time.Since(start).Seconds())
 }
 
+func VulUpdate(datastore database.Datastore, firstUpdate bool)  {
+	update(datastore,firstUpdate)
+}
+
 // update fetches all the vulnerabilities from the registered fetchers, upserts
 // them into the database and then sends notifications.
 func update(datastore database.Datastore, firstUpdate bool) {

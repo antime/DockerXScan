@@ -8,12 +8,36 @@ import (
 
 	"github.com/pborman/uuid"
 	"log"
-
+	"github.com/prometheus/client_golang/prometheus"
 	"github.com/MXi4oyu/DockerXScan/database"
 	"github.com/MXi4oyu/DockerXScan/vulnmdsrc"
 	"github.com/MXi4oyu/DockerXScan/vulnsrc"
 	"github.com/MXi4oyu/DockerXScan/common/stopper"
 )
+
+
+var (
+	promUpdaterErrorsTotal = prometheus.NewCounter(prometheus.CounterOpts{
+		Name: "clair_updater_errors_total",
+		Help: "Numbers of errors that the updater generated.",
+	})
+
+	promUpdaterDurationSeconds = prometheus.NewGauge(prometheus.GaugeOpts{
+		Name: "clair_updater_duration_seconds",
+		Help: "Time it takes to update the vulnerability database.",
+	})
+
+	promUpdaterNotesTotal = prometheus.NewGauge(prometheus.GaugeOpts{
+		Name: "clair_updater_notes_total",
+		Help: "Number of notes that the vulnerability fetchers generated.",
+	})
+)
+
+func init() {
+	prometheus.MustRegister(promUpdaterErrorsTotal)
+	prometheus.MustRegister(promUpdaterDurationSeconds)
+	prometheus.MustRegister(promUpdaterNotesTotal)
+}
 
 const (
 	updaterLastFlagName        = "updater/last"
@@ -123,11 +147,15 @@ func RunUpdater(config *UpdaterConfig, datastore database.Datastore, st *stopper
 	log.Println("updater service stopped")
 }
 
+//设置更新频率
+func setUpdaterDuration(start time.Time) {
+	promUpdaterDurationSeconds.Set(time.Since(start).Seconds())
+}
+
 // update fetches all the vulnerabilities from the registered fetchers, upserts
 // them into the database and then sends notifications.
 func update(datastore database.Datastore, firstUpdate bool) {
-	//设置更新频率,此处省略一万字
-	//哈哈，省略，一万字
+	defer setUpdaterDuration(time.Now())
 	log.Println("updating vulnerabilities")
 
 	// Fetch updates.

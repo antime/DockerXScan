@@ -12,6 +12,15 @@ import (
 	"github.com/MXi4oyu/DockerXScan/common/commonerr"
 	"github.com/MXi4oyu/DockerXScan/database"
 	"github.com/hashicorp/golang-lru"
+	"github.com/prometheus/client_golang/prometheus"
+	"time"
+)
+
+var(
+	promQueryDurationMilliseconds = prometheus.NewHistogramVec(prometheus.HistogramOpts{
+		Name: "clair_pgsql_query_duration_milliseconds",
+		Help: "Time it takes to execute the database query.",
+	}, []string{"query", "subquery"})
 )
 
 func init() {
@@ -221,4 +230,10 @@ func handleError(desc string, err error) error {
 func isErrUniqueViolation(err error) bool {
 	pqErr, ok := err.(*pq.Error)
 	return ok && pqErr.Code == "23505"
+}
+
+func observeQueryTime(query, subquery string, start time.Time) {
+	promQueryDurationMilliseconds.
+	WithLabelValues(query, subquery).
+		Observe(float64(time.Since(start).Nanoseconds()) / float64(time.Millisecond))
 }

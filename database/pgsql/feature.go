@@ -69,7 +69,7 @@ func (pgSQL *pgSQL) InsertFeatureVersion(fv database.FeatureVersion) (id int, er
 
 	// Find or create Feature first.
 	t := time.Now()
-	featureID, err := pgSQL.insertFeature(fv.Feature)
+	featureID, err := pgSQL.InsertFeature(fv.Feature)
 	observeQueryTime("insertFeatureVersion", "insertFeature", t)
 
 	if err != nil {
@@ -167,7 +167,7 @@ func (pgSQL *pgSQL) insertFeatureVersions(featureVersions []database.FeatureVers
 	IDs := make([]int, 0, len(featureVersions))
 
 	for i := 0; i < len(featureVersions); i++ {
-		id, err := pgSQL.insertFeatureVersion(featureVersions[i])
+		id, err := pgSQL.InsertFeatureVersion(featureVersions[i])
 		if err != nil {
 			return IDs, err
 		}

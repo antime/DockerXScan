@@ -118,20 +118,91 @@ func (pgSQL *pgSQL)InsertLayer(layer database.Layer) error {
 
 }
 
+
+func loadAffectedBy(tx *sql.Tx, featureVersions []database.FeatureVersion) error {
+	if len(featureVersions) == 0 {
+		return nil
+	}
+
+	// Construct list of FeatureVersion IDs, we will do a single query
+	featureVersionIDs := make([]int, 0, len(featureVersions))
+	for i := 0; i < len(featureVersions); i++ {
+		featureVersionIDs = append(featureVersionIDs, featureVersions[i].ID)
+	}
+
+	rows, err := tx.Query(searchFeatureVersionVulnerability,
+		buildInputArray(featureVersionIDs))
+	if err != nil && err != sql.ErrNoRows {
+		return handleError("searchFeatureVersionVulnerability", err)
+	}
+	defer rows.Close()
+
+	vulnerabilities := make(map[int][]database.Vulnerability, len(featureVersions))
+	var featureversionID int
+	for rows.Next() {
+		var vulnerability database.Vulnerability
+		err := rows.Scan(
+			&featureversionID,
+			&vulnerability.ID,
+			&vulnerability.Name,
+			&vulnerability.Description,
+			&vulnerability.Link,
+			&vulnerability.Severity,
+			&vulnerability.Metadata,
+			&vulnerability.Namespace.Name,
+			&vulnerability.Namespace.VersionFormat,
+			&vulnerability.FixedBy,
+		)
+		if err != nil {
+			return handleError("searchFeatureVersionVulnerability.Scan()", err)
+		}
+		vulnerabilities[featureversionID] = append(vulnerabilities[featureversionID], vulnerability)
+	}
+	if err = rows.Err(); err != nil {
+		return handleError("searchFeatureVersionVulnerability.Rows()", err)
+	}
+
+	// Assign vulnerabilities to every FeatureVersions
+	for i := 0; i < len(featureVersions); i++ {
+		featureVersions[i].AffectedBy = vulnerabilities[featureVersions[i].ID]
+	}
+
+	return nil
+}
+
+
 func (pgSQL *pgSQL) FindLayer(name string, withFeatures, withVulnerabilities bool) (database.Layer, error){
 
-	var(
+	subquery := "all"
+	if withFeatures {
+		subquery += "/features"
+	} else if withVulnerabilities {
+		subquery += "/features+vulnerabilities"
+	}
+	defer observeQueryTime("FindLayer", subquery, time.Now())
+
+	// Find the layer
+	var (
 		layer           database.Layer
 		parentID        zero.Int
 		parentName      zero.String
+		nsID            zero.Int
+		nsName          sql.NullString
+		nsVersionFormat sql.NullString
 	)
 
-	err:=pgSQL.QueryRow(searchLayer,name).Scan(
+	t := time.Now()
+	err := pgSQL.QueryRow(searchLayer, name).Scan(
 		&layer.ID,
 		&layer.Name,
+		&layer.EngineVersion,
 		&parentID,
 		&parentName,
+		&nsID,
+		&nsName,
+		&nsVersionFormat,
 	)
+	observeQueryTime("FindLayer", "searchLayer", t)
 
 	if err != nil {
 		return layer, handleError("searchLayer", err)
@@ -143,10 +214,117 @@ func (pgSQL *pgSQL) FindLayer(name string, withFeatures, withVulnerabilities boo
 			Name:  parentName.String,
 		}
 	}
+	if !nsID.IsZero() {
+		layer.Namespace = &database.Namespace{
+			Model:         database.Model{ID: int(nsID.Int64)},
+			Name:          nsName.String,
+			VersionFormat: nsVersionFormat.String,
+		}
+	}
 
+	// Find its features
+	if withFeatures || withVulnerabilities {
+		// Create a transaction to disable hash/merge joins as our experiments have shown that
+		// PostgreSQL 9.4 makes bad planning decisions about:
+		// - joining the layer tree to feature versions and feature
+		// - joining the feature versions to affected/fixed feature version and vulnerabilities
+		// It would for instance do a merge join between affected feature versions (300 rows, estimated
+		// 3000 rows) and fixed in feature version (100k rows). In this case, it is much more
+		// preferred to use a nested loop.
+		tx, err := pgSQL.Begin()
+		if err != nil {
+			return layer, handleError("FindLayer.Begin()", err)
+		}
+		defer tx.Commit()
 
-	return layer,nil
+		_, err = tx.Exec(disableHashJoin)
+		if err != nil {
+			log.WithError(err).Warningf("FindLayer: could not disable hash join")
+		}
+		_, err = tx.Exec(disableMergeJoin)
+		if err != nil {
+			log.WithError(err).Warningf("FindLayer: could not disable merge join")
+		}
 
+		t = time.Now()
+		featureVersions, err := getLayerFeatureVersions(tx, layer.ID)
+		observeQueryTime("FindLayer", "getLayerFeatureVersions", t)
+
+		if err != nil {
+			return layer, err
+		}
+
+		layer.Features = featureVersions
+
+		if withVulnerabilities {
+			// Load the vulnerabilities that affect the FeatureVersions.
+			t = time.Now()
+			err := loadAffectedBy(tx, layer.Features)
+			observeQueryTime("FindLayer", "loadAffectedBy", t)
+
+			if err != nil {
+				return layer, err
+			}
+		}
+	}
+
+	return layer, nil
+
+}
+
+func getLayerFeatureVersions(tx *sql.Tx, layerID int) ([]database.FeatureVersion, error) {
+	var featureVersions []database.FeatureVersion
+
+	// Query.
+	rows, err := tx.Query(searchLayerFeatureVersion, layerID)
+	if err != nil {
+		return featureVersions, handleError("searchLayerFeatureVersion", err)
+	}
+	defer rows.Close()
+
+	// Scan query.
+	var modification string
+	mapFeatureVersions := make(map[int]database.FeatureVersion)
+	for rows.Next() {
+		var fv database.FeatureVersion
+		err = rows.Scan(
+			&fv.ID,
+			&modification,
+			&fv.Feature.Namespace.ID,
+			&fv.Feature.Namespace.Name,
+			&fv.Feature.Namespace.VersionFormat,
+			&fv.Feature.ID,
+			&fv.Feature.Name,
+			&fv.ID,
+			&fv.Version,
+			&fv.AddedBy.ID,
+			&fv.AddedBy.Name,
+		)
+		if err != nil {
+			return featureVersions, handleError("searchLayerFeatureVersion.Scan()", err)
+		}
+
+		// Do transitive closure.
+		switch modification {
+		case "add":
+			mapFeatureVersions[fv.ID] = fv
+		case "del":
+			delete(mapFeatureVersions, fv.ID)
+		default:
+			log.WithField("modification", modification).Warning("unknown Layer_diff_FeatureVersion's modification")
+			return featureVersions, database.ErrInconsistent
+		}
+	}
+	if err = rows.Err(); err != nil {
+		return featureVersions, handleError("searchLayerFeatureVersion.Rows()", err)
+	}
+
+	// Build result by converting our map to a slice.
+	for _, featureVersion := range mapFeatureVersions {
+		featureVersions = append(featureVersions, featureVersion)
+	}
+
+	return featureVersions, nil
 }
 
 

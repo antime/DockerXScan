@@ -2,32 +2,59 @@ package pgsql
 
 import (
 	"database/sql"
-	"net/url"
-	"log"
-	"strings"
 	"fmt"
 	"io/ioutil"
+	"net/url"
+	"strings"
+	"time"
+
 	"gopkg.in/yaml.v2"
+	"github.com/hashicorp/golang-lru"
 	"github.com/lib/pq"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/remind101/migrate"
+	log "github.com/sirupsen/logrus"
 	"github.com/MXi4oyu/DockerXScan/common/commonerr"
 	"github.com/MXi4oyu/DockerXScan/database"
-	"github.com/hashicorp/golang-lru"
-	"github.com/prometheus/client_golang/prometheus"
-	"time"
+	"github.com/MXi4oyu/DockerXScan/database/pgsql/migrations"
 )
 
-var(
+var (
+	promErrorsTotal = prometheus.NewCounterVec(prometheus.CounterOpts{
+		Name: "clair_pgsql_errors_total",
+		Help: "Number of errors that PostgreSQL requests generated.",
+	}, []string{"request"})
+
+	promCacheHitsTotal = prometheus.NewCounterVec(prometheus.CounterOpts{
+		Name: "clair_pgsql_cache_hits_total",
+		Help: "Number of cache hits that the PostgreSQL backend did.",
+	}, []string{"object"})
+
+	promCacheQueriesTotal = prometheus.NewCounterVec(prometheus.CounterOpts{
+		Name: "clair_pgsql_cache_queries_total",
+		Help: "Number of cache queries that the PostgreSQL backend did.",
+	}, []string{"object"})
+
 	promQueryDurationMilliseconds = prometheus.NewHistogramVec(prometheus.HistogramOpts{
 		Name: "clair_pgsql_query_duration_milliseconds",
 		Help: "Time it takes to execute the database query.",
 	}, []string{"query", "subquery"})
+
+	promConcurrentLockVAFV = prometheus.NewGauge(prometheus.GaugeOpts{
+		Name: "clair_pgsql_concurrent_lock_vafv_total",
+		Help: "Number of transactions trying to hold the exclusive Vulnerability_Affects_FeatureVersion lock.",
+	})
 )
 
 func init() {
+	prometheus.MustRegister(promErrorsTotal)
+	prometheus.MustRegister(promCacheHitsTotal)
+	prometheus.MustRegister(promCacheQueriesTotal)
+	prometheus.MustRegister(promQueryDurationMilliseconds)
+	prometheus.MustRegister(promConcurrentLockVAFV)
 
 	database.Register("pgsql", openDatabase)
 }
-
 type Queryer interface {
 	Query(query string, args ...interface{}) (*sql.Rows, error)
 	QueryRow(query string, args ...interface{}) *sql.Row
@@ -96,7 +123,7 @@ func openDatabase(registrableComponentConfig database.RegistrableComponentConfig
 
 	// Create database.
 	if pg.config.ManageDatabaseLifecycle {
-		log.Println("pgsql: creating database")
+		log.Info("pgsql: creating database")
 		if err = createDatabase(pgSourceURL, dbName); err != nil {
 			return nil, err
 		}
@@ -115,11 +142,15 @@ func openDatabase(registrableComponentConfig database.RegistrableComponentConfig
 		return nil, fmt.Errorf("pgsql: could not open database: %v", err)
 	}
 
-
+	// Run migrations.
+	if err = migrateDatabase(pg.DB); err != nil {
+		pg.Close()
+		return nil, err
+	}
 
 	// Load fixture data.
 	if pg.config.FixturePath != "" {
-		log.Println("pgsql: loading fixtures")
+		log.Info("pgsql: loading fixtures")
 
 		d, err := ioutil.ReadFile(pg.config.FixturePath)
 		if err != nil {
@@ -160,6 +191,19 @@ func parseConnectionString(source string) (dbName string, pgSourceURL string, er
 	pgSourceURL = pgSource.String()
 
 	return
+}
+
+// migrate runs all available migrations on a pgSQL database.
+func migrateDatabase(db *sql.DB) error {
+	log.Info("running database migrations")
+
+	err := migrate.NewPostgresMigrator(db).Exec(migrate.Up, migrations.Migrations...)
+	if err != nil {
+		return fmt.Errorf("pgsql: an error occured while running migrations: %v", err)
+	}
+
+	log.Info("database migration ran successfully")
+	return nil
 }
 
 // createDatabase creates a new database.
@@ -218,6 +262,9 @@ func handleError(desc string, err error) error {
 	if err == sql.ErrNoRows {
 		return commonerr.ErrNotFound
 	}
+
+	log.WithError(err).WithField("Description", desc).Error("Handled Database Error")
+	promErrorsTotal.WithLabelValues(desc).Inc()
 
 	if _, o := err.(*pq.Error); o || err == sql.ErrTxDone || strings.HasPrefix(err.Error(), "sql:") {
 		return database.ErrBackendException

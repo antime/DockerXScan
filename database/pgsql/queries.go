@@ -1,17 +1,3 @@
-// Copyright 2015 clair authors
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 package pgsql
 
 import "strconv"
@@ -77,10 +63,11 @@ const (
 
 	// layer.go
 	searchLayer = `
-		SELECT l.id, l.name,p.id, p.name
+		SELECT l.id, l.name, l.engineversion, p.id, p.name, n.id, n.name, n.version_format
 		FROM Layer l
 			LEFT JOIN Layer p ON l.parent_id = p.id
-		WHERE l.name=$1;`
+			LEFT JOIN Namespace n ON l.namespace_id = n.id
+		WHERE l.name = $1;`
 
 	searchLayerFeatureVersion = `
 		WITH RECURSIVE layer_tree(id, name, parent_id, depth, path, cycle) AS(
@@ -112,11 +99,11 @@ const (
 						AND v.deleted_at IS NULL`
 
 	insertLayer = `
-		INSERT INTO Layer(name, parent_id, created_at)
-    VALUES($1, $2, CURRENT_TIMESTAMP)
+		INSERT INTO Layer(name, engineversion, parent_id, namespace_id, created_at)
+    VALUES($1, $2, $3, $4, CURRENT_TIMESTAMP)
     RETURNING id`
 
-	updateLayer = `UPDATE LAYER SET name = $2 WHERE id = $1`
+	updateLayer = `UPDATE LAYER SET engineversion = $2, namespace_id = $3 WHERE id = $1`
 
 	removeLayerDiffFeatureVersion = `
 		DELETE FROM Layer_diff_FeatureVersion

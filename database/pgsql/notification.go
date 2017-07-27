@@ -11,6 +11,8 @@ import (
 	"github.com/MXi4oyu/DockerXScan/common/commonerr"
 )
 
+// do it in tx so we won't insert/update a vuln without notification and vice-versa.
+// name and created doesn't matter.
 func createNotification(tx *sql.Tx, oldVulnerabilityID, newVulnerabilityID int) error {
 	defer observeQueryTime("createNotification", "all", time.Now())
 

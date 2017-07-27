@@ -3,23 +3,29 @@ package pgsql
 import (
 	"github.com/MXi4oyu/DockerXScan/common/commonerr"
 	"github.com/MXi4oyu/DockerXScan/database"
+	"time"
 )
 
 //插入一条namespace数据
 func (pgSQL *pgSQL)InsertNamespace(namespace database.Namespace) (int ,error)  {
 
-	if namespace.Name==""{
-		return 0,commonerr.NewBadRequestError("could not find/insert invalid Namespace")
+	if namespace.Name == "" {
+		return 0, commonerr.NewBadRequestError("could not find/insert invalid Namespace")
 	}
 
-	if pgSQL.cache !=nil{
+	if pgSQL.cache != nil {
+		promCacheQueriesTotal.WithLabelValues("namespace").Inc()
 		if id, found := pgSQL.cache.Get("namespace:" + namespace.Name); found {
-			return id.(int),nil
+			promCacheHitsTotal.WithLabelValues("namespace").Inc()
+			return id.(int), nil
 		}
 	}
 
+	// We do `defer observeQueryTime` here because we don't want to observe cached namespaces.
+	defer observeQueryTime("insertNamespace", "all", time.Now())
+
 	var id int
-	err:=pgSQL.QueryRow(soiNamespace,namespace.Name,namespace.VersionFormat).Scan(&id)
+	err := pgSQL.QueryRow(soiNamespace, namespace.Name, namespace.VersionFormat).Scan(&id)
 	if err != nil {
 		return 0, handleError("soiNamespace", err)
 	}
@@ -54,5 +60,4 @@ func (pgSQL *pgSQL) ListNamespaces()  (namespaces []database.Namespace, err erro
 	}
 
 	return namespaces, err
-
 }

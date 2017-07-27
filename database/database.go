@@ -61,8 +61,10 @@ type Datastore interface {
 	Close()
 	//插入namespace
 	InsertNamespace(namespace Namespace) (int ,error)
+
 	//查询namespace
 	ListNamespaces() ([]Namespace, error)
+
 	//插入layer
 	InsertLayer(Layer) error
 
@@ -113,4 +115,6 @@ type Datastore interface {
 	SetNotificationNotified(name string) error
 
 	DeleteNotification(name string) error
+
+	Ping() bool
 }

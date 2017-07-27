@@ -4,8 +4,9 @@ import (
 	"github.com/MXi4oyu/DockerXScan/database"
 	"github.com/MXi4oyu/DockerXScan/common/commonerr"
 	"github.com/MXi4oyu/DockerXScan/versionfmt"
-	"strings"
 	"database/sql"
+	"strings"
+	"time"
 )
 
 func (pgSQL *pgSQL) InsertFeature(feature database.Feature) (int, error) {
@@ -13,20 +14,26 @@ func (pgSQL *pgSQL) InsertFeature(feature database.Feature) (int, error) {
 		return 0, commonerr.NewBadRequestError("could not find/insert invalid Feature")
 	}
 
-	if pgSQL.cache !=nil{
+	// Do cache lookup.
+	if pgSQL.cache != nil {
+		promCacheQueriesTotal.WithLabelValues("feature").Inc()
 		id, found := pgSQL.cache.Get("feature:" + feature.Namespace.Name + ":" + feature.Name)
-		if found{
+		if found {
+			promCacheHitsTotal.WithLabelValues("feature").Inc()
 			return id.(int), nil
 		}
 	}
 
-	//查找或创建namespace
+	// We do `defer observeQueryTime` here because we don't want to observe cached features.
+	defer observeQueryTime("insertFeature", "all", time.Now())
+
+	// Find or create Namespace.
 	namespaceID, err := pgSQL.InsertNamespace(feature.Namespace)
 	if err != nil {
 		return 0, err
 	}
 
-	//查找或创建特征
+	// Find or create Feature.
 	var id int
 	err = pgSQL.QueryRow(soiFeature, feature.Name, namespaceID).Scan(&id)
 	if err != nil {
@@ -40,25 +47,30 @@ func (pgSQL *pgSQL) InsertFeature(feature database.Feature) (int, error) {
 	return id, nil
 }
 
-//插入特征版本
-func (pgSQL *pgSQL) InsertFeatureVersion(fv database.FeatureVersion) (id int, err error){
-
+func (pgSQL *pgSQL) InsertFeatureVersion(fv database.FeatureVersion) (id int, err error) {
 	err = versionfmt.Valid(fv.Feature.Namespace.VersionFormat, fv.Version)
 	if err != nil {
 		return 0, commonerr.NewBadRequestError("could not find/insert invalid FeatureVersion")
 	}
 
+	// Do cache lookup.
 	cacheIndex := strings.Join([]string{"featureversion", fv.Feature.Namespace.Name, fv.Feature.Name, fv.Version}, ":")
-
 	if pgSQL.cache != nil {
-
+		promCacheQueriesTotal.WithLabelValues("featureversion").Inc()
 		id, found := pgSQL.cache.Get(cacheIndex)
 		if found {
+			promCacheHitsTotal.WithLabelValues("featureversion").Inc()
 			return id.(int), nil
 		}
 	}
 
-	featureID, err := pgSQL.InsertFeature(fv.Feature)
+	// We do `defer observeQueryTime` here because we don't want to observe cached featureversions.
+	defer observeQueryTime("insertFeatureVersion", "all", time.Now())
+
+	// Find or create Feature first.
+	t := time.Now()
+	featureID, err := pgSQL.insertFeature(fv.Feature)
+	observeQueryTime("insertFeatureVersion", "insertFeature", t)
 
 	if err != nil {
 		return 0, err
@@ -66,6 +78,10 @@ func (pgSQL *pgSQL) InsertFeatureVersion(fv database.FeatureVersion) (id int, er
 
 	fv.Feature.ID = featureID
 
+	// Try to find the FeatureVersion.
+	//
+	// In a populated database, the likelihood of the FeatureVersion already being there is high.
+	// If we can find it here, we then avoid using a transaction and locking the database.
 	err = pgSQL.QueryRow(searchFeatureVersion, featureID, fv.Version).Scan(&fv.ID)
 	if err != nil && err != sql.ErrNoRows {
 		return 0, handleError("searchFeatureVersion", err)
@@ -78,13 +94,20 @@ func (pgSQL *pgSQL) InsertFeatureVersion(fv database.FeatureVersion) (id int, er
 		return fv.ID, nil
 	}
 
-
 	// Begin transaction.
 	tx, err := pgSQL.Begin()
 	if err != nil {
 		tx.Rollback()
 		return 0, handleError("insertFeatureVersion.Begin()", err)
 	}
+
+	// Lock Vulnerability_Affects_FeatureVersion exclusively.
+	// We want to prevent InsertVulnerability to modify it.
+	promConcurrentLockVAFV.Inc()
+	defer promConcurrentLockVAFV.Dec()
+	t = time.Now()
+	_, err = tx.Exec(lockVulnerabilityAffects)
+	observeQueryTime("insertFeatureVersion", "lock", t)
 
 	if err != nil {
 		tx.Rollback()
@@ -94,7 +117,9 @@ func (pgSQL *pgSQL) InsertFeatureVersion(fv database.FeatureVersion) (id int, er
 	// Find or create FeatureVersion.
 	var created bool
 
+	t = time.Now()
 	err = tx.QueryRow(soiFeatureVersion, featureID, fv.Version).Scan(&created, &fv.ID)
+	observeQueryTime("insertFeatureVersion", "soiFeatureVersion", t)
 
 	if err != nil {
 		tx.Rollback()
@@ -102,6 +127,8 @@ func (pgSQL *pgSQL) InsertFeatureVersion(fv database.FeatureVersion) (id int, er
 	}
 
 	if !created {
+		// The featureVersion already existed, no need to link it to
+		// vulnerabilities.
 		tx.Commit()
 
 		if pgSQL.cache != nil {
@@ -109,10 +136,14 @@ func (pgSQL *pgSQL) InsertFeatureVersion(fv database.FeatureVersion) (id int, er
 		}
 
 		return fv.ID, nil
-
 	}
 
+	// Link the new FeatureVersion with every vulnerabilities that affect it, by inserting in
+	// Vulnerability_Affects_FeatureVersion.
+	t = time.Now()
 	err = linkFeatureVersionToVulnerabilities(tx, fv)
+	observeQueryTime("insertFeatureVersion", "linkFeatureVersionToVulnerabilities", t)
+
 	if err != nil {
 		tx.Rollback()
 		return 0, err
@@ -129,7 +160,21 @@ func (pgSQL *pgSQL) InsertFeatureVersion(fv database.FeatureVersion) (id int, er
 	}
 
 	return fv.ID, nil
+}
 
+// TODO(Quentin-M): Batch me
+func (pgSQL *pgSQL) insertFeatureVersions(featureVersions []database.FeatureVersion) ([]int, error) {
+	IDs := make([]int, 0, len(featureVersions))
+
+	for i := 0; i < len(featureVersions); i++ {
+		id, err := pgSQL.insertFeatureVersion(featureVersions[i])
+		if err != nil {
+			return IDs, err
+		}
+		IDs = append(IDs, id)
+	}
+
+	return IDs, nil
 }
 
 type vulnerabilityAffectsFeatureVersion struct {
@@ -138,8 +183,9 @@ type vulnerabilityAffectsFeatureVersion struct {
 	fixedInVersion  string
 }
 
-
-func linkFeatureVersionToVulnerabilities(tx *sql.Tx, featureVersion database.FeatureVersion) error{
+func linkFeatureVersionToVulnerabilities(tx *sql.Tx, featureVersion database.FeatureVersion) error {
+	// Select every vulnerability and the fixed version that affect this Feature.
+	// TODO(Quentin-M): LIMIT
 	rows, err := tx.Query(searchVulnerabilityFixedInFeature, featureVersion.Feature.ID)
 	if err != nil {
 		return handleError("searchVulnerabilityFixedInFeature", err)
@@ -160,6 +206,8 @@ func linkFeatureVersionToVulnerabilities(tx *sql.Tx, featureVersion database.Fea
 			return err
 		}
 		if cmp < 0 {
+			// The version of the FeatureVersion we are inserting is lower than the fixed version on this
+			// Vulnerability, thus, this FeatureVersion is affected by it.
 			affects = append(affects, affect)
 		}
 	}
@@ -179,5 +227,4 @@ func linkFeatureVersionToVulnerabilities(tx *sql.Tx, featureVersion database.Fea
 	}
 
 	return nil
-
 }

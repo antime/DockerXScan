@@ -31,7 +31,6 @@ func Run(cfg *Config, store database.Datastore, st *stopper.Stopper)  {
 	//插入一个layer
 	store.InsertLayer(database.Layer{
 		Name:"77935dbf418a0abf8e9276ef3df3d79af1f3afded45e1d8a7f87ed6e09057df1",
-		ParentID:1,
 	})
 
 	//删除一个layer

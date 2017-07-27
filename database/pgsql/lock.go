@@ -16,19 +16,17 @@ package pgsql
 
 import (
 	"time"
-	"log"
+	log "github.com/sirupsen/logrus"
 	"github.com/MXi4oyu/DockerXScan/common/commonerr"
 )
 
-// Lock tries to set a temporary lock in the database.
-//
-// Lock does not block, instead, it returns true and its expiration time
-// is the lock has been successfully acquired or false otherwise
 func (pgSQL *pgSQL) Lock(name string, owner string, duration time.Duration, renew bool) (bool, time.Time) {
 	if name == "" || owner == "" || duration == 0 {
-		log.Println("could not create an invalid lock")
+		log.Warning("could not create an invalid lock")
 		return false, time.Time{}
 	}
+
+	defer observeQueryTime("Lock", "all", time.Now())
 
 	// Compute expiration.
 	until := time.Now().Add(duration)
@@ -64,9 +62,11 @@ func (pgSQL *pgSQL) Lock(name string, owner string, duration time.Duration, rene
 // Unlock unlocks a lock specified by its name if I own it
 func (pgSQL *pgSQL) Unlock(name, owner string) {
 	if name == "" || owner == "" {
-		log.Println("could not delete an invalid lock")
+		log.Warning("could not delete an invalid lock")
 		return
 	}
+
+	defer observeQueryTime("Unlock", "all", time.Now())
 
 	pgSQL.Exec(removeLock, name, owner)
 }
@@ -75,9 +75,11 @@ func (pgSQL *pgSQL) Unlock(name, owner string) {
 // expiration time.
 func (pgSQL *pgSQL) FindLock(name string) (string, time.Time, error) {
 	if name == "" {
-		log.Println("could not find an invalid lock")
+		log.Warning("could not find an invalid lock")
 		return "", time.Time{}, commonerr.NewBadRequestError("could not find an invalid lock")
 	}
+
+	defer observeQueryTime("FindLock", "all", time.Now())
 
 	var owner string
 	var until time.Time
@@ -91,6 +93,7 @@ func (pgSQL *pgSQL) FindLock(name string) (string, time.Time, error) {
 
 // pruneLocks removes every expired locks from the database
 func (pgSQL *pgSQL) pruneLocks() {
+	defer observeQueryTime("pruneLocks", "all", time.Now())
 
 	if _, err := pgSQL.Exec(removeLockExpired); err != nil {
 		handleError("removeLockExpired", err)

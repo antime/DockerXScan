@@ -101,7 +101,7 @@ func Boot(config *Config)  {
 	st.Begin()
 	go updater.RunUpdater(config.Updater,db,st)
 	waitForSignals(syscall.SIGINT, syscall.SIGTERM)
-	//st.Stop()
+	st.Stop()
 }
 
 func main()  {

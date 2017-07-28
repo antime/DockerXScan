@@ -11,7 +11,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
-	"log"
+	log "github.com/sirupsen/logrus"
 	"github.com/MXi4oyu/DockerXScan/database"
 	"github.com/MXi4oyu/DockerXScan/versionfmt"
 	"github.com/MXi4oyu/DockerXScan/versionfmt/dpkg"
@@ -67,7 +67,7 @@ func init() {
 }
 
 func (u *updater) Update(datastore database.Datastore) (resp vulnsrc.UpdateResponse, err error) {
-	log.Println("Start fetching vulnerabilities")
+	log.WithField("package", "Ubuntu").Info("Start fetching vulnerabilities")
 
 	// Pull the bzr repository.
 	if err = u.pullRepository(); err != nil {
@@ -156,8 +156,7 @@ func (u *updater) pullRepository() (err error) {
 		cmd := exec.Command("bzr", "branch", "--use-existing-dir", trackerRepository, ".")
 		cmd.Dir = u.repositoryLocalPath
 		if out, err := cmd.CombinedOutput(); err != nil {
-			log.Println(string(out))
-			log.Println("could not branch Ubuntu repository")
+			log.WithError(err).WithField("output", string(out)).Error("could not branch Ubuntu repository")
 			return commonerr.ErrCouldNotDownload
 		}
 
@@ -168,9 +167,8 @@ func (u *updater) pullRepository() (err error) {
 	cmd := exec.Command("bzr", "pull", "--overwrite")
 	cmd.Dir = u.repositoryLocalPath
 	if out, err := cmd.CombinedOutput(); err != nil {
-		log.Println(string(out))
 		os.RemoveAll(u.repositoryLocalPath)
-		log.Println("could not pull Ubuntu repository")
+		log.WithError(err).WithField("output", string(out)).Error("could not pull Ubuntu repository")
 		return commonerr.ErrCouldNotDownload
 	}
 
@@ -182,13 +180,13 @@ func getRevisionNumber(pathToRepo string) (int, error) {
 	cmd.Dir = pathToRepo
 	out, err := cmd.CombinedOutput()
 	if err != nil {
-		log.Println("could not get Ubuntu repository's revision number")
+		log.WithError(err).WithField("output", string(out)).Error("could not get Ubuntu repository's revision number")
 		return 0, commonerr.ErrCouldNotDownload
 	}
 
 	revno, err := strconv.Atoi(strings.TrimSpace(string(out)))
 	if err != nil {
-		log.Println("could not parse Ubuntu repository's revision number")
+		log.WithError(err).WithField("output", string(out)).Error("could not parse Ubuntu repository's revision number")
 		return 0, commonerr.ErrCouldNotDownload
 	}
 
@@ -203,14 +201,14 @@ func collectModifiedVulnerabilities(revision int, dbRevision, repositoryLocalPat
 		for _, folder := range []string{"active", "retired"} {
 			d, err := os.Open(repositoryLocalPath + "/" + folder)
 			if err != nil {
-				log.Println("could not open Ubuntu vulnerabilities repository's folder")
+				log.WithError(err).Error("could not open Ubuntu vulnerabilities repository's folder")
 				return nil, vulnsrc.ErrFilesystem
 			}
 
 			// Get the FileInfo of all the files in the directory.
 			names, err := d.Readdirnames(-1)
 			if err != nil {
-				log.Println("could not read Ubuntu vulnerabilities repository's folder")
+				log.WithError(err).Error("could not read Ubuntu vulnerabilities repository's folder")
 				return nil, vulnsrc.ErrFilesystem
 			}
 
@@ -235,7 +233,7 @@ func collectModifiedVulnerabilities(revision int, dbRevision, repositoryLocalPat
 	// Handle an up to date database.
 	dbRevisionInt, _ := strconv.Atoi(dbRevision)
 	if revision == dbRevisionInt {
-		log.Println("no update")
+		log.WithField("package", "Ubuntu").Debug("no update")
 		return modifiedCVE, nil
 	}
 
@@ -244,7 +242,7 @@ func collectModifiedVulnerabilities(revision int, dbRevision, repositoryLocalPat
 	cmd.Dir = repositoryLocalPath
 	out, err := cmd.CombinedOutput()
 	if err != nil {
-		log.Println("could not get Ubuntu vulnerabilities repository logs")
+		log.WithError(err).WithField("output", string(out)).Error("could not get Ubuntu vulnerabilities repository logs")
 		return nil, commonerr.ErrCouldNotDownload
 	}
 
@@ -342,7 +340,7 @@ func parseUbuntuCVE(fileContent io.Reader) (vulnerability database.Vulnerability
 						var err error
 						err = versionfmt.Valid(dpkg.ParserName, md["note"])
 						if err != nil {
-							log.Println("could not parse package version. skipping")
+							log.WithError(err).WithField("version", md["note"]).Warning("could not parse package version. skipping")
 						}
 						version = md["note"]
 					}
@@ -404,7 +402,7 @@ func SeverityFromPriority(priority string) database.Severity {
 	case "critical":
 		return database.CriticalSeverity
 	default:
-		log.Println("could not determine a vulnerability severity from: %s", priority)
+		log.Warning("could not determine a vulnerability severity from: %s", priority)
 		return database.UnknownSeverity
 	}
 }

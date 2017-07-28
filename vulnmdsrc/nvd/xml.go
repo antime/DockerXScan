@@ -17,7 +17,7 @@ package nvd
 import (
 	"fmt"
 	"strings"
-	"log"
+	log "github.com/sirupsen/logrus"
 )
 
 type nvd struct {
@@ -91,7 +91,7 @@ func addVec(str *string, vec, val string) {
 		if let, ok := vectorValuesToLetters[val]; ok {
 			*str = fmt.Sprintf("%s%s:%s/", *str, vec, let)
 		} else {
-			log.Println("unknown value for CVSSv2 vector")
+			log.WithFields(log.Fields{"value": val, "vector": vec}).Warning("unknown value for CVSSv2 vector")
 		}
 	}
 }

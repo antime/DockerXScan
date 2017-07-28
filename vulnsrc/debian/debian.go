@@ -9,8 +9,7 @@ import (
 	"io"
 	"net/http"
 	"strings"
-
-	"log"
+	log "github.com/sirupsen/logrus"
 	"github.com/MXi4oyu/DockerXScan/database"
 	"github.com/MXi4oyu/DockerXScan/versionfmt"
 	"github.com/MXi4oyu/DockerXScan/versionfmt/dpkg"
@@ -44,12 +43,12 @@ func init() {
 }
 
 func (u *updater) Update(datastore database.Datastore) (resp vulnsrc.UpdateResponse, err error) {
-	log.Println("Start fetching vulnerabilities")
+	log.WithField("package", "Debian").Info("Start fetching vulnerabilities")
 
 	// Download JSON.
 	r, err := http.Get(url)
 	if err != nil {
-		log.Println("could not download Debian's update")
+		log.WithError(err).Error("could not download Debian's update")
 		return resp, commonerr.ErrCouldNotDownload
 	}
 
@@ -90,14 +89,14 @@ func buildResponse(jsonReader io.Reader, latestKnownHash string) (resp vulnsrc.U
 	var data jsonData
 	err = json.NewDecoder(teedJSONReader).Decode(&data)
 	if err != nil {
-		log.Println("could not unmarshal Debian's JSON")
+		log.WithError(err).Error("could not unmarshal Debian's JSON")
 		return resp, commonerr.ErrCouldNotParse
 	}
 
 	// Calculate the hash and skip updating if the hash has been seen before.
 	hash = hex.EncodeToString(jsonSHA.Sum(nil))
 	if latestKnownHash == hash {
-		log.Println("no update")
+		log.WithField("package", "Debian").Debug("no update")
 		return resp, nil
 	}
 
@@ -109,7 +108,7 @@ func buildResponse(jsonReader io.Reader, latestKnownHash string) (resp vulnsrc.U
 	for k := range unknownReleases {
 		note := fmt.Sprintf("Debian %s is not mapped to any version number (eg. Jessie->8). Please update me.", k)
 		resp.Notes = append(resp.Notes, note)
-		log.Println(note)
+		log.Warning(note)
 	}
 
 	return resp, nil
@@ -167,7 +166,7 @@ func parseDebianJSON(data *jsonData) (vulnerabilities []database.Vulnerability, 
 					// "fixed_version" (if affected).
 					err = versionfmt.Valid(dpkg.ParserName, releaseNode.FixedVersion)
 					if err != nil {
-						log.Println("could not parse package version. skipping")
+						log.WithError(err).WithField("version", version).Warning("could not parse package version. skipping")
 						continue
 					}
 					version = releaseNode.FixedVersion
@@ -234,8 +233,7 @@ func SeverityFromUrgency(urgency string) database.Severity {
 		return database.HighSeverity
 
 	default:
-		log.Println("could not determine vulnerability severity from urgency")
+		log.WithField("urgency", urgency).Warning("could not determine vulnerability severity from urgency")
 		return database.UnknownSeverity
 	}
 }
-

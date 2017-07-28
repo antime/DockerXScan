@@ -7,7 +7,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
-	"log"
+	log "github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v2"
 	"github.com/MXi4oyu/DockerXScan/database"
 	"github.com/MXi4oyu/DockerXScan/versionfmt"
@@ -15,6 +15,7 @@ import (
 	"github.com/MXi4oyu/DockerXScan/vulnsrc"
 	"github.com/MXi4oyu/DockerXScan/common/commonerr"
 )
+
 
 const (
 	secdbGitURL  = "https://git.alpinelinux.org/cgit/alpine-secdb"
@@ -31,7 +32,7 @@ type updater struct {
 }
 
 func (u *updater) Update(db database.Datastore) (resp vulnsrc.UpdateResponse, err error) {
-	log.Println("Start fetching vulnerabilities")
+	log.WithField("package", "Alpine").Info("Start fetching vulnerabilities")
 
 	// Pull the master branch.
 	var commit string
@@ -53,7 +54,7 @@ func (u *updater) Update(db database.Datastore) (resp vulnsrc.UpdateResponse, er
 
 	// Short-circuit if there have been no updates.
 	if commit == dbCommit {
-		log.Println("no update")
+		log.WithField("package", "alpine").Debug("no update")
 		return
 	}
 
@@ -165,8 +166,7 @@ func (u *updater) pullRepository() (commit string, err error) {
 		cmd.Dir = u.repositoryLocalPath
 		if out, err := cmd.CombinedOutput(); err != nil {
 			u.Clean()
-			log.Println(string(out))
-			log.Println("could not pull alpine-secdb repository")
+			log.WithError(err).WithField("output", string(out)).Error("could not pull alpine-secdb repository")
 			return "", commonerr.ErrCouldNotDownload
 		}
 	} else {
@@ -217,7 +217,7 @@ func parseYAML(r io.Reader) (vulns []database.Vulnerability, err error) {
 		for version, vulnStrs := range pkg.Fixes {
 			err := versionfmt.Valid(dpkg.ParserName, version)
 			if err != nil {
-				log.Println("could not parse package version. skipping")
+				log.WithError(err).WithField("version", version).Warning("could not parse package version. skipping")
 				continue
 			}
 

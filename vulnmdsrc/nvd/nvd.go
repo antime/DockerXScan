@@ -13,7 +13,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
-	"log"
+	log "github.com/sirupsen/logrus"
 	"github.com/MXi4oyu/DockerXScan/vulnmdsrc"
 	"github.com/MXi4oyu/DockerXScan/database"
 	"github.com/MXi4oyu/DockerXScan/common/commonerr"
@@ -72,8 +72,7 @@ func (a *appender) BuildCache(datastore database.Datastore) error {
 	for dataFeedName, dataFeedReader := range dataFeedReaders {
 		var nvd nvd
 		if err = xml.NewDecoder(dataFeedReader).Decode(&nvd); err != nil {
-			log.Println(string(dataFeedName))
-			log.Println("could not decode NVD data feed")
+			log.WithError(err).WithField(logDataFeedName, dataFeedName).Error("could not decode NVD data feed")
 			return commonerr.ErrCouldNotParse
 		}
 
@@ -117,7 +116,7 @@ func getDataFeeds(dataFeedHashes map[string]string, localPath string) (map[strin
 	for _, dataFeedName := range dataFeedNames {
 		hash, err := getHashFromMetaURL(fmt.Sprintf(dataFeedMetaURL, dataFeedName))
 		if err != nil {
-			log.Println("could not get NVD data feed hash")
+			log.WithError(err).WithField(logDataFeedName, dataFeedName).Warning("could not get NVD data feed hash")
 
 			// It's not a big deal, no need interrupt, we're just going to download it again then.
 			continue
@@ -146,14 +145,14 @@ func getDataFeeds(dataFeedHashes map[string]string, localPath string) (map[strin
 			// Download data feed.
 			r, err := http.Get(fmt.Sprintf(dataFeedURL, dataFeedName))
 			if err != nil {
-				log.Println("could not download NVD data feed")
+				log.WithError(err).WithField(logDataFeedName, dataFeedName).Error("could not download NVD data feed")
 				return dataFeedReaders, dataFeedHashes, commonerr.ErrCouldNotDownload
 			}
 
 			// Un-gzip it.
 			gr, err := gzip.NewReader(r.Body)
 			if err != nil {
-				log.Println("could not read NVD data feed")
+				log.WithError(err).WithField(logDataFeedName, dataFeedName).Error("could not read NVD data feed")
 				return dataFeedReaders, dataFeedHashes, commonerr.ErrCouldNotDownload
 			}
 
@@ -171,7 +170,7 @@ func getDataFeeds(dataFeedHashes map[string]string, localPath string) (map[strin
 				}
 				dataFeedReaders[dataFeedName] = nrc
 
-				log.Println("could not store NVD data feed to filesystem")
+				log.WithError(err).Warning("could not store NVD data feed to filesystem")
 			}
 		}
 	}

@@ -2,11 +2,7 @@ package main
 
 import (
 	"fmt"
-	//注册数据库驱动
-	_"github.com/MXi4oyu/DockerXScan/database/pgsql"
 	"flag"
-	"github.com/MXi4oyu/DockerXScan/database"
-	"github.com/MXi4oyu/DockerXScan/common/stopper"
 	"log"
 	"math/rand"
 	"time"
@@ -16,8 +12,14 @@ import (
 	"io/ioutil"
 	"gopkg.in/yaml.v2"
 	"errors"
+	//注册数据库驱动
+	_"github.com/MXi4oyu/DockerXScan/database/pgsql"
+	"github.com/MXi4oyu/DockerXScan/database"
+	"github.com/MXi4oyu/DockerXScan/common/stopper"
 	"github.com/MXi4oyu/DockerXScan/api"
 	"github.com/MXi4oyu/DockerXScan/updater"
+	"github.com/MXi4oyu/DockerXScan/notifier"
+	"github.com/MXi4oyu/DockerXScan/notification"
 )
 
 var ErrDatasourceNotLoaded = errors.New("could not load configuration: no database source specified")
@@ -29,6 +31,7 @@ type File struct {
 type Config struct {
 	Database database.RegistrableComponentConfig
 	Updater  *updater.UpdaterConfig
+	Notifier *notification.Config
 	API      *api.Config
 }
 
@@ -86,6 +89,11 @@ func Boot(config *Config)  {
 		log.Fatal(err)
 	}
 	defer db.Close()
+
+	// Start notifier
+	st.Begin()
+	go notifier.RunNotifier(config.Notifier, db, st)
+
 	st.Begin()
 	go api.Run(config.API,db,st)
 

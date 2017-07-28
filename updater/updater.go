@@ -7,14 +7,21 @@ import (
 	"time"
 
 	"github.com/pborman/uuid"
-	"log"
 	"github.com/prometheus/client_golang/prometheus"
+	log "github.com/sirupsen/logrus"
 	"github.com/MXi4oyu/DockerXScan/database"
 	"github.com/MXi4oyu/DockerXScan/vulnmdsrc"
 	"github.com/MXi4oyu/DockerXScan/vulnsrc"
 	"github.com/MXi4oyu/DockerXScan/common/stopper"
 )
 
+
+const (
+	updaterLastFlagName        = "updater/last"
+	updaterLockName            = "updater"
+	updaterLockDuration        = updaterLockRefreshDuration + time.Minute*2
+	updaterLockRefreshDuration = time.Minute * 8
+)
 
 var (
 	promUpdaterErrorsTotal = prometheus.NewCounter(prometheus.CounterOpts{
@@ -39,14 +46,6 @@ func init() {
 	prometheus.MustRegister(promUpdaterNotesTotal)
 }
 
-const (
-	updaterLastFlagName        = "updater/last"
-	updaterLockName            = "updater"
-	updaterLockDuration        = updaterLockRefreshDuration + time.Minute*2
-	updaterLockRefreshDuration = time.Minute * 8
-)
-
-
 // UpdaterConfig is the configuration for the Updater service.
 type UpdaterConfig struct {
 	Interval time.Duration
@@ -59,12 +58,12 @@ func RunUpdater(config *UpdaterConfig, datastore database.Datastore, st *stopper
 
 	// Do not run the updater if there is no config or if the interval is 0.
 	if config == nil || config.Interval == 0 {
-		log.Println("updater service is disabled.")
+		log.Info("updater service is disabled.")
 		return
 	}
 
 	whoAmI := uuid.New()
-	log.Println("updater service started")
+	log.WithField("lock identifier", whoAmI).Info("updater service started")
 
 	for {
 		var stop bool
@@ -74,7 +73,7 @@ func RunUpdater(config *UpdaterConfig, datastore database.Datastore, st *stopper
 		nextUpdate := time.Now().UTC()
 		lastUpdate, firstUpdate, err := getLastUpdate(datastore)
 		if err != nil {
-			log.Println("an error occured while getting the last update time")
+			log.WithError(err).Error("an error occured while getting the last update time")
 			nextUpdate = nextUpdate.Add(config.Interval)
 		} else if firstUpdate == false {
 			nextUpdate = lastUpdate.Add(config.Interval)
@@ -83,7 +82,7 @@ func RunUpdater(config *UpdaterConfig, datastore database.Datastore, st *stopper
 		// If the next update timer is in the past, then try to update.
 		if nextUpdate.Before(time.Now().UTC()) {
 			// Attempt to get a lock on the the update.
-			log.Println("attempting to obtain update lock")
+			log.Debug("attempting to obtain update lock")
 			hasLock, hasLockUntil := datastore.Lock(updaterLockName, whoAmI, updaterLockDuration, false)
 			if hasLock {
 				// Launch update in a new go routine.
@@ -115,11 +114,10 @@ func RunUpdater(config *UpdaterConfig, datastore database.Datastore, st *stopper
 			} else {
 				lockOwner, lockExpiration, err := datastore.FindLock(updaterLockName)
 				if err != nil {
-					log.Println("update lock is already taken")
+					log.Debug("update lock is already taken")
 					nextUpdate = hasLockUntil
 				} else {
-					log.Println(lockOwner)
-					log.Println("update lock is already taken")
+					log.WithFields(log.Fields{"lock owner": lockOwner, "lock expiration": lockExpiration}).Debug("update lock is already taken")
 					nextUpdate = lockExpiration
 				}
 			}
@@ -128,7 +126,7 @@ func RunUpdater(config *UpdaterConfig, datastore database.Datastore, st *stopper
 		// Sleep, but remain stoppable until approximately the next update time.
 		now := time.Now().UTC()
 		waitUntil := nextUpdate.Add(time.Duration(rand.ExpFloat64()/0.5) * time.Second)
-		log.Println("next update attempt scheduled")
+		log.WithField("scheduled time", waitUntil).Debug("next update attempt scheduled")
 		if !waitUntil.Before(now) {
 			if !st.Sleep(waitUntil.Sub(time.Now())) {
 				break
@@ -144,33 +142,25 @@ func RunUpdater(config *UpdaterConfig, datastore database.Datastore, st *stopper
 		updaters.Clean()
 	}
 
-	log.Println("updater service stopped")
-}
-
-//设置更新频率
-func setUpdaterDuration(start time.Time) {
-	promUpdaterDurationSeconds.Set(time.Since(start).Seconds())
-}
-
-func VulUpdate(datastore database.Datastore, firstUpdate bool)  {
-	update(datastore,firstUpdate)
+	log.Info("updater service stopped")
 }
 
 // update fetches all the vulnerabilities from the registered fetchers, upserts
 // them into the database and then sends notifications.
 func update(datastore database.Datastore, firstUpdate bool) {
 	defer setUpdaterDuration(time.Now())
-	log.Println("updating vulnerabilities")
+
+	log.Info("updating vulnerabilities")
 
 	// Fetch updates.
 	status, vulnerabilities, flags, notes := fetch(datastore)
 
 	// Insert vulnerabilities.
-	log.Println("inserting vulnerabilities for update")
+	log.WithField("count", len(vulnerabilities)).Debug("inserting vulnerabilities for update")
 	err := datastore.InsertVulnerabilities(vulnerabilities, !firstUpdate)
 	if err != nil {
-
-		log.Println("an error occured when inserting vulnerabilities for update")
+		promUpdaterErrorsTotal.Inc()
+		log.WithError(err).Error("an error occured when inserting vulnerabilities for update")
 		return
 	}
 	vulnerabilities = nil
@@ -182,15 +172,20 @@ func update(datastore database.Datastore, firstUpdate bool) {
 
 	// Log notes.
 	for _, note := range notes {
-		log.Println(note)
-		log.Println("fetcher note")
+		log.WithField("note", note).Warning("fetcher note")
 	}
+	promUpdaterNotesTotal.Set(float64(len(notes)))
+
 	// Update last successful update if every fetchers worked properly.
 	if status {
 		datastore.InsertKeyValue(updaterLastFlagName, strconv.FormatInt(time.Now().UTC().Unix(), 10))
 	}
 
-	log.Println("update finished")
+	log.Info("update finished")
+}
+
+func setUpdaterDuration(start time.Time) {
+	promUpdaterDurationSeconds.Set(time.Since(start).Seconds())
 }
 
 // fetch get data from the registered fetchers, in parallel.
@@ -201,20 +196,21 @@ func fetch(datastore database.Datastore) (bool, []database.Vulnerability, map[st
 	flags := make(map[string]string)
 
 	// Fetch updates in parallel.
-	log.Println("fetching vulnerability updates")
+	log.Info("fetching vulnerability updates")
 	var responseC = make(chan *vulnsrc.UpdateResponse, 0)
 	for n, u := range vulnsrc.Updaters() {
 		go func(name string, u vulnsrc.Updater) {
 			response, err := u.Update(datastore)
 			if err != nil {
-				log.Println("an error occured when fetching update")
+				promUpdaterErrorsTotal.Inc()
+				log.WithError(err).WithField("updater name", name).Error("an error occured when fetching update")
 				status = false
 				responseC <- nil
 				return
 			}
 
 			responseC <- &response
-			log.Println("finished fetching")
+			log.WithField("updater name", name).Info("finished fetching")
 		}(n, u)
 	}
 
@@ -222,7 +218,7 @@ func fetch(datastore database.Datastore) (bool, []database.Vulnerability, map[st
 	for i := 0; i < len(vulnsrc.Updaters()); i++ {
 		resp := <-responseC
 		if resp != nil {
-			vulnerabilities = append(vulnerabilities, DoVulnerabilitiesNamespacing(resp.Vulnerabilities)...)
+			vulnerabilities = append(vulnerabilities, doVulnerabilitiesNamespacing(resp.Vulnerabilities)...)
 			notes = append(notes, resp.Notes...)
 			if resp.FlagName != "" && resp.FlagValue != "" {
 				flags[resp.FlagName] = resp.FlagValue
@@ -240,7 +236,7 @@ func addMetadata(datastore database.Datastore, vulnerabilities []database.Vulner
 		return vulnerabilities
 	}
 
-	log.Println("adding metadata to vulnerabilities")
+	log.Info("adding metadata to vulnerabilities")
 
 	// Add a mutex to each vulnerability to ensure that only one appender at a
 	// time can modify the vulnerability's Metadata map.
@@ -260,7 +256,8 @@ func addMetadata(datastore database.Datastore, vulnerabilities []database.Vulner
 
 			// Build up a metadata cache.
 			if err := appender.BuildCache(datastore); err != nil {
-				log.Println("an error occured when loading metadata fetcher")
+				promUpdaterErrorsTotal.Inc()
+				log.WithError(err).WithField("appender name", name).Error("an error occured when loading metadata fetcher")
 				return
 			}
 
@@ -329,7 +326,7 @@ func (lv *lockableVulnerability) appendFunc(metadataKey string, metadata interfa
 // It helps simplifying the fetchers that share the same metadata about a
 // Vulnerability regardless of their actual namespace (ie. same vulnerability
 // information for every version of a distro).
-func DoVulnerabilitiesNamespacing(vulnerabilities []database.Vulnerability) []database.Vulnerability {
+func doVulnerabilitiesNamespacing(vulnerabilities []database.Vulnerability) []database.Vulnerability {
 	vulnerabilitiesMap := make(map[string]*database.Vulnerability)
 
 	for _, v := range vulnerabilities {

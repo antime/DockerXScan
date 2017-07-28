@@ -20,6 +20,23 @@ import (
 	"github.com/MXi4oyu/DockerXScan/updater"
 	"github.com/MXi4oyu/DockerXScan/notifier"
 	"github.com/MXi4oyu/DockerXScan/notification"
+	//注册拓展
+	_ "github.com/MXi4oyu/DockerXScan/featurefmt/dpkg"
+	_ "github.com/MXi4oyu/DockerXScan/featurefmt/apk"
+	_ "github.com/MXi4oyu/DockerXScan/featurefmt/rpm"
+	_ "github.com/MXi4oyu/DockerXScan/featurens/alpinerelease"
+	_ "github.com/MXi4oyu/DockerXScan/featurens/aptsources"
+	_ "github.com/MXi4oyu/DockerXScan/featurens/lsbrelease"
+	_ "github.com/MXi4oyu/DockerXScan/featurens/osrelease"
+	_ "github.com/MXi4oyu/DockerXScan/featurens/redhatrelease"
+	_ "github.com/MXi4oyu/DockerXScan/notification/webhook"
+	_ "github.com/MXi4oyu/DockerXScan/vulnmdsrc/nvd"
+	_ "github.com/MXi4oyu/DockerXScan/vulnsrc/alpine"
+	_ "github.com/MXi4oyu/DockerXScan/vulnsrc/debian"
+	_ "github.com/MXi4oyu/DockerXScan/vulnsrc/oracle"
+	_ "github.com/MXi4oyu/DockerXScan/vulnsrc/rhel"
+	_ "github.com/MXi4oyu/DockerXScan/vulnsrc/ubuntu"
+
 )
 
 var ErrDatasourceNotLoaded = errors.New("could not load configuration: no database source specified")

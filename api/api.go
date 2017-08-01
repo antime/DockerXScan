@@ -34,12 +34,14 @@ var(
 
 func Run(cfg *Config, store database.Datastore, st *stopper.Stopper) {
 	defer st.End()
-
+	//显示漏洞信息
 	minSeverity, err := database.NewSeverity(*flagMinimumSeverity)
 
 	ctx := &context{store, cfg.PaginationKey}
 	layer,_:=GetLayer("52b4ea56b21260207dd64214cdd9703af24848972315ab2b0891e9ed8afd77e4",ctx)
 	ShowVuls(layer,minSeverity)
+
+
 	// Do not run the API service if there is no config.
 	if cfg == nil {
 		log.Info("main API service is disabled.")

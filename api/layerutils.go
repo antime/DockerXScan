@@ -59,6 +59,7 @@ func (s *sorter) Less(i, j int) bool {
 	return s.by(s.vulnerabilities[i], s.vulnerabilities[j])
 }
 
+//显示漏洞信息
 func ShowVuls(layer v1.Layer,minSeverity database.Severity)  {
 	isSafe := true
 	hasVisibleVulnerabilities := false

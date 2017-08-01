@@ -111,17 +111,19 @@ func analyzeLayer(path, layerName, parentLayerName string) error {
 	files,err:=DetectImageContent("docker",layerName,path,parentLayerName)
 
 	//列出namespace
-	namespace,err:=featurens.Detect(files)
-	if err!=nil{
-		log.Println("namespace Detect error::")
-	}
+	namespace,_:=featurens.Detect(files)
+
 	if namespace !=nil{
-		fmt.Println(namespace.Name)
+		fmt.Println("namespace.Name:",namespace.Name)
+		fmt.Println("namespace.VersionFormat:",namespace.VersionFormat)
+		//将namespace信息发送到服务端
 	}
 
 	//列出特征版本
 	featureversions,err:= featurefmt.ListFeatures(files)
 	for i,v :=range featureversions{
+		//发送特征到服务器
+		//发送特征版本到服务器
 		fmt.Println(i,v)
 	}
 

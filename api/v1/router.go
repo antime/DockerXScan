@@ -60,6 +60,7 @@ func NewRouter(store database.Datastore, paginationKey string) *httprouter.Route
 
 	// Namespaces
 	router.GET("/namespaces", httpHandler(getNamespaces, ctx))
+	router.POST("/namespaces",httpHandler(postNamespaces,ctx))
 
 	// Vulnerabilities
 	router.GET("/namespaces/:namespaceName/vulnerabilities", httpHandler(getVulnerabilities, ctx))

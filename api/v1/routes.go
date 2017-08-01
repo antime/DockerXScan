@@ -24,6 +24,7 @@ const (
 	getLayerRoute            = "v1/getLayer"
 	deleteLayerRoute         = "v1/deleteLayer"
 	getNamespacesRoute       = "v1/getNamespaces"
+	postNamespacesRoute	   ="v1/postNamespaces"
 	getVulnerabilitiesRoute  = "v1/getVulnerabilities"
 	postVulnerabilityRoute   = "v1/postVulnerability"
 	getVulnerabilityRoute    = "v1/getVulnerability"
@@ -173,6 +174,23 @@ func getNamespaces(w http.ResponseWriter, r *http.Request, p httprouter.Params, 
 
 	writeResponse(w, r, http.StatusOK, NamespaceEnvelope{Namespaces: &namespaces})
 	return getNamespacesRoute, http.StatusOK
+}
+
+//插入namespace
+func postNamespaces(w http.ResponseWriter, r *http.Request, p httprouter.Params, ctx *context) (string, int) {
+
+	request:=Namespace{}
+	err := decodeJSON(r, &request)
+	if err!=nil{
+		writeResponse(w,r,http.StatusBadRequest,NamespaceEnvelope{Error:&Error{"namespace error"}})
+		return postNamespacesRoute,http.StatusBadRequest
+	}
+
+	ns:=database.Namespace{Name:request.Name,VersionFormat:request.VersionFormat}
+
+	ctx.Store.InsertNamespace(ns)
+
+	return postNamespacesRoute,http.StatusOK
 }
 
 func getVulnerabilities(w http.ResponseWriter, r *http.Request, p httprouter.Params, ctx *context) (string, int) {

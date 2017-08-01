@@ -111,8 +111,11 @@ func Boot(config *Config)  {
 	st.Begin()
 	go notifier.RunNotifier(config.Notifier, db, st)
 
+	// Start API
 	st.Begin()
-	go api.Run(config.API,db,st)
+	go api.Run(config.API, db, st)
+	st.Begin()
+	go api.RunHealth(config.API, db, st)
 
 	//漏洞更新
 	st.Begin()

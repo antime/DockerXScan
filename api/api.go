@@ -38,7 +38,7 @@ func Run(cfg *Config, store database.Datastore, st *stopper.Stopper) {
 	minSeverity, err := database.NewSeverity(*flagMinimumSeverity)
 
 	ctx := &context{store, cfg.PaginationKey}
-	layer,_:=GetLayer("5d3f009478ca7657d151df0df4e42214d4bca5e4538370316591005ced8ac7b1",ctx)
+	layer,_:=GetLayer("52b4ea56b21260207dd64214cdd9703af24848972315ab2b0891e9ed8afd77e4",ctx)
 	ShowVuls(layer,minSeverity)
 	// Do not run the API service if there is no config.
 	if cfg == nil {

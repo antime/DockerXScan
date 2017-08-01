@@ -13,6 +13,7 @@ import (
 	"github.com/tylerb/graceful"
 	"github.com/MXi4oyu/DockerXScan/database"
 	"github.com/MXi4oyu/DockerXScan/common/stopper"
+	"flag"
 )
 
 
@@ -27,13 +28,18 @@ type Config struct {
 	CertFile, KeyFile, CAFile string
 }
 
+var(
+	flagMinimumSeverity = flag.String("minimum-severity", "Negligible", "Minimum severity of vulnerabilities to show (Unknown, Negligible, Low, Medium, High, Critical, Defcon1)")
+)
 
 func Run(cfg *Config, store database.Datastore, st *stopper.Stopper) {
 	defer st.End()
 
-	ctx := &context{store, cfg.PaginationKey}
-	GetLayer("5d3f009478ca7657d151df0df4e42214d4bca5e4538370316591005ced8ac7b1",ctx)
+	minSeverity, err := database.NewSeverity(*flagMinimumSeverity)
 
+	ctx := &context{store, cfg.PaginationKey}
+	layer,_:=GetLayer("5d3f009478ca7657d151df0df4e42214d4bca5e4538370316591005ced8ac7b1",ctx)
+	ShowVuls(layer,minSeverity)
 	// Do not run the API service if there is no config.
 	if cfg == nil {
 		log.Info("main API service is disabled.")

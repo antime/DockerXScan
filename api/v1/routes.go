@@ -11,11 +11,11 @@ import (
 	"github.com/julienschmidt/httprouter"
 	"github.com/prometheus/client_golang/prometheus"
 	log "github.com/sirupsen/logrus"
-
 	"github.com/MXi4oyu/DockerXScan/database"
 	"github.com/MXi4oyu/DockerXScan/common/commonerr"
 	"github.com/MXi4oyu/DockerXScan/tarutil"
 	"github.com/coreos/clair"
+	"github.com/MXi4oyu/DockerXScan/worker"
 )
 
 const (
@@ -95,7 +95,7 @@ func postLayer(w http.ResponseWriter, r *http.Request, p httprouter.Params, ctx 
 		return postLayerRoute, http.StatusBadRequest
 	}
 
-	err = clair.ProcessLayer(ctx.Store, request.Layer.Format, request.Layer.Name, request.Layer.ParentName, request.Layer.Path, request.Layer.Headers)
+	err = worker.ProcessLayer(ctx.Store, request.Layer.Format, request.Layer.Name, request.Layer.ParentName, request.Layer.Path, request.Layer.Headers)
 	if err != nil {
 		if err == tarutil.ErrCouldNotExtract ||
 			err == tarutil.ErrExtractedFileTooBig ||
@@ -119,7 +119,7 @@ func postLayer(w http.ResponseWriter, r *http.Request, p httprouter.Params, ctx 
 		Path:             request.Layer.Path,
 		Headers:          request.Layer.Headers,
 		Format:           request.Layer.Format,
-		IndexedByVersion: clair.Version,
+		IndexedByVersion: 3,
 	}})
 	return postLayerRoute, http.StatusCreated
 }

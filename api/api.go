@@ -30,6 +30,7 @@ type Config struct {
 
 func Run(cfg *Config, store database.Datastore, st *stopper.Stopper) {
 	defer st.End()
+
 	ctx := &context{store, cfg.PaginationKey}
 	GetLayer("5d3f009478ca7657d151df0df4e42214d4bca5e4538370316591005ced8ac7b1",ctx)
 

@@ -4,6 +4,7 @@ import (
 	"github.com/MXi4oyu/DockerXScan/database"
 	"github.com/MXi4oyu/DockerXScan/api/v1"
 	"fmt"
+	log "github.com/sirupsen/logrus"
 )
 
 const (
@@ -24,5 +25,6 @@ func GetLayer(layerName string,ctx *context) (string, int) {
 
 	layer := v1.LayerFromDatabaseModel(dbLayer, true, true)
 	fmt.Println(&layer)
+	log.Info(&layer)
 	return getLayerRoute,200
 }

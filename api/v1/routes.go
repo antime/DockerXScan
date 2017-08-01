@@ -12,7 +12,6 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 	log "github.com/sirupsen/logrus"
 
-	"github.com/MXi4oyu/DockerXScan"
 	"github.com/MXi4oyu/DockerXScan/database"
 	"github.com/MXi4oyu/DockerXScan/common/commonerr"
 	"github.com/MXi4oyu/DockerXScan/tarutil"

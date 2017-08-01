@@ -5,6 +5,7 @@ import (
 	"github.com/MXi4oyu/DockerXScan/api/v1"
 	"fmt"
 	"github.com/prometheus/common/log"
+	"github.com/fatih/color"
 )
 
 

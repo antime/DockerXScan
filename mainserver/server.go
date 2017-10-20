@@ -36,6 +36,9 @@ import (
 	_ "github.com/MXi4oyu/DockerXScan/vulnsrc/oracle"
 	_ "github.com/MXi4oyu/DockerXScan/vulnsrc/rhel"
 	_ "github.com/MXi4oyu/DockerXScan/vulnsrc/ubuntu"
+	_ "github.com/MXi4oyu/DockerXScan/imagefmt/docker"
+	_ "github.com/MXi4oyu/DockerXScan/imagefmt/aci"
+
 
 )
 

@@ -81,5 +81,8 @@ func NewRouter(store database.Datastore, paginationKey string) *httprouter.Route
 	// Metrics
 	router.GET("/metrics", httpHandler(getMetrics, ctx))
 
+	//featureversion
+	router.POST("/featureversion",httpHandler(postFeatureVersion,ctx))
+
 	return router
 }

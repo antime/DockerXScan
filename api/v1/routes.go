@@ -14,7 +14,6 @@ import (
 	"github.com/MXi4oyu/DockerXScan/database"
 	"github.com/MXi4oyu/DockerXScan/common/commonerr"
 	"github.com/MXi4oyu/DockerXScan/tarutil"
-	"github.com/coreos/clair"
 	"github.com/MXi4oyu/DockerXScan/worker"
 )
 
@@ -36,6 +35,7 @@ const (
 	getNotificationRoute     = "v1/getNotification"
 	deleteNotificationRoute  = "v1/deleteNotification"
 	getMetricsRoute          = "v1/getMetrics"
+	postFeatureVersionRoute       = "v1/postFeatureVersion"
 
 	// maxBodySize restricts client request bodies to 1MiB.
 	maxBodySize int64 = 1048576
@@ -100,7 +100,7 @@ func postLayer(w http.ResponseWriter, r *http.Request, p httprouter.Params, ctx 
 	if err != nil {
 		if err == tarutil.ErrCouldNotExtract ||
 			err == tarutil.ErrExtractedFileTooBig ||
-			err == clair.ErrUnsupported {
+			err == worker.ErrUnsupported {
 			writeResponse(w, r, statusUnprocessableEntity, LayerEnvelope{Error: &Error{err.Error()}})
 			return postLayerRoute, statusUnprocessableEntity
 		}
@@ -503,4 +503,13 @@ func deleteNotification(w http.ResponseWriter, r *http.Request, p httprouter.Par
 func getMetrics(w http.ResponseWriter, r *http.Request, p httprouter.Params, ctx *context) (string, int) {
 	prometheus.Handler().ServeHTTP(w, r)
 	return getMetricsRoute, 0
+}
+
+func postFeatureVersion(w http.ResponseWriter, r *http.Request, p httprouter.Params, ctx *context)(string,int)  {
+
+	//方案一：本地解包时使用的接口
+	//预留
+
+	return postFeatureVersionRoute,0
+
 }

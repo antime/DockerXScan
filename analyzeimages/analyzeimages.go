@@ -140,7 +140,7 @@ func AnalyzeLocalImage(imageName string, minSeverity database.Severity, endpoint
 
 	//打印报告
 
-	fmt.Printf("Clair report for image %s (%s)\n", imageName, time.Now().UTC())
+	fmt.Printf("DockerXScan report for image %s (%s)\n", imageName, time.Now().UTC())
 
 	if len(layer.Features) == 0 {
 		fmt.Printf("%s No features have been detected in the image. This usually means that the image isn't supported by Clair.\n", color.YellowString("NOTE:"))

@@ -289,7 +289,7 @@ func AnalyzeLocalImage(imageName string, minSeverity database.Severity, endpoint
 
 	}
  
-        cs.Update(bson.M{"tag_url":"https://"+imageName},bson.M{"$set":bson.M{"speed":mspeed}})
+        cs.Update(bson.M{"tag_url":"https://"+imageName},bson.M{"$set":bson.M{"speed":100}})
 	return nil
 
 }

@@ -23,9 +23,9 @@ import (
 	"github.com/fatih/color"
 	"strconv"
 	"net"
-        "gopkg.in/mgo.v2"
-        "gopkg.in/mgo.v2/bson"
-        "net/url"
+    "gopkg.in/mgo.v2"
+    "gopkg.in/mgo.v2/bson"
+    "net/url"
 )
 
 

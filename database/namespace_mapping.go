@@ -16,23 +16,25 @@ package database
 
 // DebianReleasesMapping translates Debian code names and class names to version numbers
 var DebianReleasesMapping = map[string]string{
-	// Code names
+        // Code names
 	"squeeze": "6",
 	"wheezy":  "7",
 	"jessie":  "8",
 	"stretch": "9",
+	"buster":  "10",
 	"sid":     "unstable",
 
 	// Class names
-	"oldstable": "7",
-	"stable":    "8",
-	"testing":   "9",
-	"unstable":  "unstable",
+	"oldoldstable": "7",
+	"oldstable":    "8",
+	"stable":       "9",
+	"testing":      "10",
+	"unstable":     "unstable",
 }
 
 // UbuntuReleasesMapping translates Ubuntu code names to version numbers
 var UbuntuReleasesMapping = map[string]string{
-	"precise": "12.04",
+       "precise": "12.04",
 	"quantal": "12.10",
 	"raring":  "13.04",
 	"trusty":  "14.04",

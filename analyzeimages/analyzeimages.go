@@ -207,6 +207,8 @@ func AnalyzeLocalImage(imageName string, minSeverity database.Severity, endpoint
         uimage,_:=url.Parse("https://"+imageName)
         srpwdfile:="/code/DockerXface/docker_registry_face/static/results/"+uimage.Path+".html"
 
+		//如果存在则删除
+        os.Remove(srpwdfile)
 
         //更新扫描进度
         msession,_:=mgo.Dial("localhost:27017")
